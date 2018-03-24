@@ -1,0 +1,341 @@
+<html>
+<head>
+<title>Firestorm – Programmatic Interface</title>
+</head>
+
+<body>
+<table>
+<tr>
+<td valign=top width=15%> </td>
+<td>
+<table bgcolor="#FFFFFF" cellpadding=0 cellspacing=0 width=100%>
+<tr>
+<td align=left>
+<strong><font size=+5>sanbachs.NET</font></strong><br>
+<strong><font size=+1>Serving the DataPerfect* Community</font></strong>
+</td>
+<td align=right><a href=http://www.dataperfect.nl/><img src=../logo.gif width=318 height=61 border=0></a></td>
+</tr>
+</table>
+<HR>
+<table width=100%>
+<tr>
+<td>
+<a href=../index.html>Home</a> >
+<a href=index.html>Firestorm</a> >
+<a href=firestorm.html>Principles of
+Operation</a> >
+Programmatic Interface
+</td>
+<tr>
+<td align=right>Last updated: December 5, 2000</td>
+</tr>
+</table>
+
+<h1>Firestorm – Programmatic Interface</h1>
+
+<p>
+The Firestorm programmatic interface provides a few ANSI C type
+definitions and a handful of ANSI C functions to access the data files of
+a DataPerfect database from a C program that you would write.
+After writing and compiling your program, you would link it with the
+executable engine and the PBA (panel byte array) that describes your
+database.
+Then your program is ready to run.
+</p>
+
+<p>
+We advise you to look through the demonstration before reading the
+specifications of the programmatic interface, particularly if you are
+new to programming.
+</p>
+
+<h2>Demonstration</h2>
+<p>
+In the <a href=demo.html>demonstration</a>, 
+we will show how to take a simple DataPerfect database
+and create a web application based on it.
+When complete, the demonstration will consist of:
+<ol>
+<li>a simple program to print all the records
+<li>a program to generate an HTML page showing all the records
+<li>a CGI script to generate an HTML page showing all the records
+<li>a CGI script to add one to a field of a particular record, creating it
+if necessary
+<li>a CGI script to generate an HTML page showing a subset of the records
+</ol>
+
+<h2>Specification</h2>
+<p>
+[
+This part is not yet finished. Please check back from time to time.
+Thank you for your interest and patience!
+]
+</p>
+
+<p>
+To use the programmatic interface to write CGI scripts, you will need to
+follow the instructions in the <a href=usage.html>usage guide</a> to
+create a PBA.C file describing your database. You will also need to link
+together the compiled Firestorm files dot.o, engine.o, dpif.o, 
+fsCore.o, fsMain.o together with your compiled pba.o file and an ANSI C
+function you write to implement the FSquery function.
+See the <a href=demo/demo5.c>demo5.c</a> program from the
+<a href=demo.html>demonstration</a> for a complete example.
+</p>
+
+<h3>Field values</h3>
+
+<p>
+Each field value from a record of a DataPerfect panel is represented by
+a variable of type Field_Value* (read "field value pointer").
+You can declare such a value in C using a declaration of the form:
+<pre>
+  Field_Value *P1F2;
+</pre>
+
+<p>
+Once you have found a record in a panel, you can assign a field value
+to this variable (these steps will be explained below).
+With a field value assigned to P1F2, you can then get access to
+certain aspects of the field value.
+<pre>
+  P1F2->field_number   // the field number (a C int)
+  P1F2->field_type     // the field type (a C char)
+  P1F2->field_length   // the number of characters in the field value (a C int)
+  P1F2->field_data     // the actual field value string (a C char*)
+</pre>
+
+<p>
+Of these the last is by far the most frequently used in Firestorm CGI scripts.
+</p>
+
+<p>
+Besides field values which come from data records in panels, there is also
+the C equivalent of "report variables" which are also represented as
+variables of type Field_Value*.
+In particular, the values that you expect to get as inputs to your CGI
+scripts are declared in this way:
+<pre>
+  Field_Value *Name;
+  Field_Value *Address;
+
+  FS_CGI_arg FSexpect[] = {
+    { "Name", &Name, NULL},
+    { "Address", &Address, NULL},
+    NULL
+  };
+</pre>
+
+<p>
+These declarations are of the same form as declarations of real field values.
+The appearance of such a variable in the FSexpect[] array signals to the
+fsMain program that you "expect" these variables to be filled with
+values coming in to your CGI script from the HTML page that links to the script.
+</p>
+
+<h3>Identifying a panel</h3>
+
+<p>
+You will need a variable in your program for each panel that you plan to
+use. Each of these will be declared as:
+<pre>
+  FS_panel p1;
+</pre>
+
+<p>
+Before you can use the FS_panel variable, you will need to initialize it.
+This is done by calling the FSsetPanel function:
+<pre>
+  p1 = FSsetPanel(1);
+</pre>
+
+<p>
+It is only by convention that panel variables are named "p" followed 
+by a number. You may name them anything you like.
+Similarly, field variables need not be named "P" panel number "F" field number.
+Again, you are free to name them anything you like.
+They are simply C variable names.
+</p>
+
+<h3>Positioning to a record</h3>
+
+<p>
+Once you have a panel variable, there are several ways to position to a record.
+In all of them you must specify an index, by number.
+In some of them you also must specify values for some or all of the key
+fields in the index.
+This is done by calling the function FSifList 
+(read <i>F</i>ire<i>s</i>torm <i>i</i>ndex and <i>f</i>ield <i>list</i>).
+A sample call of this function is shown here:
+<pre>
+  FSifList(p1,3,Name,NULL)
+</pre>
+
+<p>
+The arguments to this function call are, in order, the panel, the index
+number, a field value for each of the key fields.
+In the example, the C constant NULL is used to indicate a premature end to
+the field list.
+In other words, we have specified a subset.
+</p>
+
+<p>
+Examples of functions that position to a record are:
+<pre>
+  err = FSfirstRec(p1,2);                                // 1
+  err = FSlastRec(p1,3);                                 // 2
+  err = FSequalRec(p1,FSifList(p1,1,Name,Address));      // 3
+  err = FSsubFirstRec(p2,FSifList(p2,4,P1F3,NULL));      // 4
+  err = FSsubLastRec(p2,FSifList(p2,4,P1F3,Name,NULL));  // 5
+  err = FSnextRec(p1);                                   // 6
+  err = FSprevRec(p1);                                   // 7
+  err = FSsubNextRec(p2);                                // 8
+  err = FSsubPrevRec(p2);                                // 9
+</pre>
+
+<p>
+These examples have the following purposes:
+<ol>
+<li>position to the first record in panel 1 using index 2
+<li>position to the last record in panel 1 using index 3
+<li>position to the record in panel 1 whose key field values for index 1 are
+held in the variables Name and Address (in that order)
+<li>position to the first record in panel 2 that matches the field value
+in the variable P1F3, using index 4
+<li>position to the last record in panel 2 that matches the field values
+P1F3 and Name (in that order), using index 4
+<li>position to the next record in panel 1, using the current index
+<li>position to the previous record in panel 1, using the current index
+<li>position to the next record in the current subset of panel 2,
+using the current index
+<li>position to the previous record in the current subset of panel 2,
+using the current index
+</ol>
+
+<h3>Getting field values from a record</h3>
+
+<p>
+Once you have positioned to a record, you may get the field values from
+the record using the FSfield function.
+This function returns a Field_Value* data type.
+For example,
+<pre>
+  FSfield(p2,3)
+</pre>
+
+<p>
+is the field value for panel 2, field 3, of the current record. And
+<pre>
+  FSfield(p2,3)->field_data
+</pre>
+
+<p>
+is the actual character string containing that field's value.
+</p>
+
+<p>
+If you have declared a variable
+<pre>
+  Field_Value *P1F2;
+</pre>
+then, once you have positioned to a record in panel one, you can assign
+this variable to represent the field value of field two in that record
+in this way:
+<pre>
+  P1F2 = FSfield(p1,2);
+</pre>
+
+<h3>Creating a new field value</h3>
+
+<p>
+[
+From this point on, there is only an outline.
+Please check back again.
+Thank you for your interest and patience.
+]
+</p>
+
+<pre>
+  FStoday();
+  FSnow();
+  NewField(field_type, field_number, field_length, field_data);
+</pre>
+
+<h3>Updating a single field in an existing record</h3>
+
+<pre>
+  FSupdateField(panel, ifList, field_number, update_type, field_value);
+    /* update_type */
+    /* ':' - simple replacement */
+    /* '+' - add the field value into field_number */
+    /* '-' - subtract the field value into field_number */
+    /* Note: these last two are a little like DP's keep-a-total */
+</pre>
+
+<h3>Creating a record</h3>
+<pre>
+  FScreateRec(panel, fList);
+    /* fList is a "field list" created by calling FSfList */
+</pre>
+
+<h3>Deleting a record</h3>
+<p>
+There is (as of yet) no function in the programmatic interface for doing
+this. For now, we can use one of the lower-level functions (from dpif.c).
+</p>
+
+<pre>
+  dpe_DeleteRec(panel->pba, ifList);
+</pre>
+
+<h3>Updating a record</h3>
+<p>
+There is (as of yet) no function in the programmatic interface for doing
+this. For now, we can use one of the lower-level functions (from dpif.c).
+</p>
+
+<pre>
+  dpe_UpdateRec(panel->pba, fList, old_fList);
+    /* fList is a "field list" created by calling FSfList */
+    /* old_fList is a "field list" of the old field values */
+</pre>
+
+<HR>
+<H2>Contacting sanbachs.NET</h2>
+<P>Sign or browse our
+<A HREF="http://cgi.aros.net/cgi-bin/cgiwrap/~sanbachs/ngb1.cgi?WsoID=1&WsID=5">guest book</A>.
+</P>
+<address>
+<a href="mailto:webmaster@sanbachs.com">webmaster@sanbachs.com</a><br>
+<a href="mailto:l.jbastian@worldnet.att.net">A. Lewis Bastian, Jr.</a><br>
+<a href="../bruce/resume.html">Bruce Conrad</a><br>
+<a href="mailto:thom@xmission.com">Thom Boyer</a>
+</address>
+<HR>
+<H3>Disclaimer</H3>
+*<FONT COLOR="#0000FF">DataPerfect&reg;</FONT>
+is a copyright of Novell, Inc.
+sanbachs.NET is not affiliated with Novell, Inc.<BR>
+<HR>
+<img src="http://www.sanbachs.net/cgi-bin/countg.cgi?Name=fsfs">
+visitors since November 19, 2000.
+</td>
+</tr>
+</table>
+<h5 align=center>Copyright &#169; 2001 sanbachs.NET</h5>
+<!-- Start Quantcast tag -->
+<script type="text/javascript">
+_qoptions={
+labels:"firestorm",
+qacct:"p-74TfK8Z7JORIY"
+};
+</script>
+<script type="text/javascript" src="http://edge.quantserve.com/quant.js"></script>
+<noscript>
+<img src="http://pixel.quantserve.com/pixel/p-74TfK8Z7JORIY.gif" style="display: none;" border="0" height="1" width="1" alt="Quantcast"/>
+</noscript>
+<!-- End Quantcast tag -->
+</body>
+</html>
+

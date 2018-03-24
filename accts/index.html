@@ -1,0 +1,55 @@
+<HTML>
+<HEAD>
+<TITLE>Accounts Demonstration</TITLE>
+</HEAD>
+<BODY>
+<A HREF=accts.txt>ACCTS database schema</A>
+<BR>
+<A HREF=pba.c>ACCTS database pba.c</A>
+<BR>
+<A HREF=accts.h>accts.h</A>
+<BR>
+<A HREF=accts.c>accts.c</A>
+<BR>
+<BR>
+Adding Account <A HREF=accts-new.c>accts-new.c</A>
+<FORM METHOD=GET ACTION=http://cgi.aros.net/cgi-bin/cgiwrap/sanbachs/accts-new.cgi>
+# <INPUT TYPE=TEXT NAME=AC MAXLENGTH=9>
+with $ <INPUT TYPE=TEXT NAME=Balance>
+<INPUT TYPE=SUBMIT VALUE=Go>
+</FORM>
+Account Balance <A HREF=accts-balance.c>accts-balance.c</A>
+<FORM METHOD=GET ACTION=http://cgi.aros.net/cgi-bin/cgiwrap/sanbachs/accts-balance.cgi>
+# <INPUT TYPE=TEXT NAME=AC MAXLENGTH=9>
+<INPUT TYPE=SUBMIT VALUE=Go>
+</FORM>
+Account Withdrawal <A HREF=accts-withdraw.c>accts-withdraw.c</A>
+<FORM METHOD=GET ACTION=http://cgi.aros.net/cgi-bin/cgiwrap/sanbachs/accts-withdraw.cgi>
+# <INPUT TYPE=TEXT NAME=AC MAXLENGTH=9>
+$ <INPUT TYPE=TEXT NAME=Amount>
+<INPUT TYPE=SUBMIT VALUE=Go>
+</FORM>
+Account List <A HREF=accts-list.c>accts-list.c</A>
+<FORM METHOD=GET ACTION=http://cgi.aros.net/cgi-bin/cgiwrap/sanbachs/accts-list.cgi>
+<INPUT TYPE=SUBMIT VALUE=Go>
+</FORM>
+Close Account <A HREF=accts-close.c>accts-close.c</A>
+<FORM METHOD=GET ACTION=http://cgi.aros.net/cgi-bin/cgiwrap/sanbachs/accts-close.cgi>
+# <INPUT TYPE=TEXT NAME=AC MAXLENGTH=9>
+<INPUT TYPE=SUBMIT VALUE=Go>
+</FORM>
+<!-- Start Quantcast tag -->
+<script type="text/javascript">
+_qoptions={
+labels:"firestorm",
+qacct:"p-74TfK8Z7JORIY"
+};
+</script>
+<script type="text/javascript" src="http://edge.quantserve.com/quant.js"></script>
+<noscript>
+<img src="http://pixel.quantserve.com/pixel/p-74TfK8Z7JORIY.gif" style="display: none;" border="0" height="1" width="1" alt="Quantcast"/>
+</noscript>
+<!-- End Quantcast tag -->
+</BODY>
+</HTML>
+

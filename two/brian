@@ -1,0 +1,152 @@
+From postmaster@s02.dynamixs.nl  Mon Nov 15 00:09:09 2004
+Return-Path: <postmaster@s02.dynamixs.nl>
+Received: from s02.dynamixs.nl ([213.19.189.47])
+	by mars.aros.net (8.12.9p1/8.12.9) with ESMTP id iAF77Q7V027357
+	for <sanbachs@aros.net>; Mon, 15 Nov 2004 00:09:01 -0700 (MST)
+	(envelope-from postmaster@s02.dynamixs.nl)
+Received: from mail06.syd.optusnet.com.au (mail06.syd.optusnet.com.au [211.29.132.187])
+          by s02.dynamixs.nl with ESMTP (Mailtraq/2.6.1.1683) id SDYN07381259
+          for dataperf@mailinglist.nu; Mon, 15 Nov 2004 08:05:10 +0100
+Received: from brianx (c220-237-22-200.carlnfd2.nsw.optusnet.com.au [220.237.22.200])
+	by mail06.syd.optusnet.com.au (8.12.11/8.12.11) with SMTP id iAF72OC8024959
+	for <dataperf@mailinglist.nu>; Mon, 15 Nov 2004 18:02:28 +1100
+Message-ID: <001c01c4cae1$154803f0$6601a8c0@brianx>
+From: "Brian Hancock" <brian.hancock@brileigh.com>
+Reply-To: dataperf@mailinglist.nu
+Errors-To: postmaster@s02.dynamixs.nl
+To: DataPerfect Mailinglist <dataperf@s02.dynamixs.nl>
+Sender: dataperf@s02.dynamixs.nl
+References: <000601c4c846$84852240$6401a8c0@rgv.rr.com> <001a01c4c855$dc916cf0$6401a8c0@brianx> <4194D303.6050703@quixnet.net> <002a01c4c8ee$3b1acbc0$6401a8c0@brianx>
+Subject: A sample DP Dynamic Web application
+Date: Mon, 15 Nov 2004 18:02:30 +1100
+MIME-Version: 1.0
+Content-Type: text/plain;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
+X-Priority: 3
+X-MSMail-Priority: Normal
+X-Mailer: Microsoft Outlook Express 6.00.2800.1437
+X-MimeOLE: Produced By Microsoft MimeOLE V6.00.2800.1441
+X-Hops: 2
+X-POST-MessageClass: 10; Mailing List Message
+X-Virus-Scanned: by amavisd-new
+Status: RO
+
+Hi Everyone,
+
+I can't wait till the next version of DP comes out, with even more web
+functionality than it now has. I did a presentation for the Assocation of
+WordPerfect Professionals last month, and I have updated the presentation
+material including a totally database driven web application.  You can
+download the presentation and the sample application from my web site at
+http://www.brileigh.com/awpp
+
+I haven't resolved permission issues with my web host, so I can't show you a
+live website, however there are instructions on how to set up your own
+Apache web server and PERL Far easier that you would think. About 30 minutes
+work.  It will look and feel and work like a fully blown web app. (Ok maybe
+with some rough edges as this is version 1.0)
+
+I think the sample application will perhaps inspire you to have a go at it,
+and that you too will have the enthusiam for the the work Lew, Thom and
+Bruce have been doing with DataPerfect in regards to DP in a silent mode.
+They are giving DP a huge new lease of life.
+
+The concept is relatively easy, I showed a web designer how it works
+yesterday, and he seemed enthused about how easy and powerful it seemed.
+
+The PERL script I have written are very generic, and you will probably be
+able to run them as is for many applications. The script are commented with
+the changes you will need to make. There are not many - mainly to do with
+the name of the .STR file, and which numbered report you wish to run. This
+is my first substantial PERL exercise, so anyone with some PERL skill who
+would like to add a bit a polish to it please do so.
+
+I have set up, a few different sorts of reports. Some just viewing data,
+other editing, or adding. records. There is a fairly standard methodology to
+it all.
+
+Getting the web page pretties in it is actually  very easy. If you are not
+artistically minded, and I am certainly not, you might find that a
+connection with a web designer will pay dividends. Let him/her create the
+web pages, and then tell you where you can put data. Probaby the easiest way
+is to embed a table with a head row and one one row and some sample data.
+For this sample I just randomly picked a website, and "stole" their
+pretties. I promised I will never use it in anything other than a demo.
+
+To start off to see how easy it is, Create a DP report on the data panel.
+Open the webpage that you have written  in a text editor, and remove leading
+space from each line, and copy everything you want up to the header row of
+the table into the First Page Header. (Bring DP into a window, place cursor
+in the First Page Header field, and then System Menu - Edit-Paste).
+Similarly copy the  table row into the Report Body, and then Copy the
+</Table> closing and everything from their on into the Final Footer. Go back
+to the Report Body and replace your dummy data with fields from the DP
+panel. Have the Report save the file to disk, with a .HTM extension.  Run
+the report and this will product a static webpage as a file on disk.
+
+The reports in the Zango application are a little more complex. But they
+look worse than they are. In summary.  If you are not sure how it all works,
+play around, with the sample application. Back everything up, before you
+tamper with it.
+
+A couple of gotchas to watch out for.
+
+1. PERL is not very friendly to read or to get diagnostic information from
+2. You will be calling reports by their numbered position from the Report
+List, (Built In Short Report) is No.1
+3. Be careful you do not accidentally delete a report, otherwise all the
+other reports with shift down. Actually I have used a Report Variable RV1 to
+number the Report, and my Browser Control Panel (Param.dat) has a field with
+the report number so that you can check which report is supposed to be
+running
+4. In my sample, the structure is. Report based on desired Panel. Virtual
+Sub Report  the Browser Control Panel (BCP) to get My Session ID linked by
+Report Number in RV1.Immediately after that another Virtual Sub report again
+to the  BCP linked on RV1 (Report Numbe) and RV2 (SessionID) but this time
+it is to lift off the Parameters for the Report if any,  After that
+subreport exits another Virtual Sub Report to the same BCP Panel linked
+again by Report Number and SessionID to delete all the Parameters.  Yep
+thats 3 Virtual Subreport in a row back to trhe same panel.
+4a. There is a multiuser issue to be aware of which hopefully will be
+addressed by features in the next version of DP. (I hope I am not being
+presumptuous Lew).  The Synthetic Transaction log, imports the Form field
+and values in the BCP. At the moment, I do not know who owns that data. (A
+global variable passed from a Command Line Switch working in a similar
+manner to the UserID variable will make life much easier, and will eliminate
+the first pass Virtual SubReport thru the BCP). At the moment a race
+condition exists where for perhaps as much as a couple of seconds, where
+multiuser access against the same report will be a problem.
+4b. Ok back to the structure. Another subreport can be used but this time to
+the real data panels, where data manipulation can occur, eg updating data,
+deleting data, creating new records etc. Then sraight after that, a Virtual
+SubReport to the Panel that is holding the data for the resultant webpage.
+Its in this subreport that you copy the webpage as described above for
+statis webpages. Stop the Report as soon as that subreport exits.
+
+It may sound complicated, but once you have the structure things will just
+fall into place.
+
+5. Oh yeah one other big gotcha..  I exported an STE so I could do some
+shortcut changes to a report. I reimported the STE, but forgot to start DP
+up interactively. DP needs to regenerate indexes after a full STE import,
+and that only happens interactively. I ran the Web application before doing
+that, and DP does not end very elegantly. Remember to do system maintenance
+first in interactive mode.!!!
+
+Enjoy
+
+Regards
+Brian
+
+-- 
+
+DataPerfect Users Discussion Group Mailinglist
+Website        : http://www.dataperfect.nl
+Unsubscribe    : mailserver@mailinglist.nu
+Subject or text: UNSUBSCRIBE dataperf
+-----------------------------------
+This message is scanned for viruses
+-----------------------------------
+
+

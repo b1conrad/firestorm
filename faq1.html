@@ -1,0 +1,495 @@
+<html>
+<head>
+<title>Firestorm – Frequently Asked Questions</title>
+</head>
+
+<body>
+<table>
+<tr>
+<td valign=top width=15%> </td>
+<td>
+<table bgcolor="#FFFFFF" cellpadding=0 cellspacing=0 width=100%>
+<tr>
+<td align=left>
+<strong><font size=+5>sanbachs.NET</font></strong><br>
+<strong><font size=+1>Serving the DataPerfect* Community</font></strong>
+</td>
+<td align=right><a href=http://www.dataperfect.nl/><img src=../logo.gif width=318 height=61 border=0></a></td>
+</tr>
+</table>
+<HR>
+<table width=100%>
+<tr>
+<td>
+<a href=../index.html>Home</a> >
+<a href=index.html>Firestorm</a> >
+Frequently Asked Questions
+</td>
+</tr>
+<tr>
+<td align=right>Last updated: December 6, 2000</td>
+</tr>
+</table>
+
+<h1>Firestorm – Frequently Asked Questions</h1>
+
+<p>
+In the grand tradition of the Internet, we will attempt to answer questions
+on this page.
+"Frequently" will mean "at least once."
+Feel free to get your questions to us however you choose, and as answers
+appear on this page, we will do our best to notify you.
+</p>
+
+<p>
+In a break with tradition, we intend to allow you to ask questions here
+as well as come here for answers.
+This will, of course, be implemented using Firestorm, as time permits.
+Thanks to 
+<a href=mailto:brileigh@ozemail.com.au>Brian Hancock</a>
+for the first seven questions.
+And to <a href=mailto:w.j.reilly@worldnet.att.net>Bill Reilly</a> for 8 and 9.
+</p>
+
+<p><strong>Question</strong>
+1. "the compile lines in the http://www.sanbachs.net/firestorm/usage.html
+page, make reference to the pba.o object file , for example:
+<pre>
+  gcc -o fs-xxxxx pba.o ../dp.o ../map.o ../dpif.o ../engine.o ../dot.o
+</pre>
+</p>
+
+<p>
+however the Makefile does not create a pba.o so I changed reference to the
+pba.o to the pba.c generated from the Metad app, and everything worked
+smoothly. Was that a typo or did I miss the creation of the pba object file?"
+</p>
+
+<p><strong>Answer</strong>
+1. the only Makefile we've distributed so far is the one for the Firestorm
+code itself. Here is what we usually do. As suggested elsewhere, we
+create one subdirectory of the fs directory for each database (using
+the five character abbreviation as the directory name). In this 
+subdirectory, we place a Makefile specific to the database, such as,
+for example, this <a href=demo/Makefile>Makefile</a> from the 
+<a href=demo.html>demo database</a>.
+</p>
+
+<p>
+The first two lines of the Makefile (repeated here for your convenience)
+define ENGINE_OBJS to be a list of object files, and FS_OBJS to be a
+slightly longer list containing the former.
+<pre>
+  ENGINE_OBJS = pba.o ../dpif.o ../engine.o ../dot.o
+  FS_OBJS     = ${ENGINE_OBJS} ../fsMain.o ../fsCore.o
+</pre>
+</p>
+
+<p>
+You'll notice that pba.o is expected to be in the current directory
+(the one the Makefile is in, i.e. "fs/demo"), while the other object files
+are in the parent directory (i.e. "fs"), and have been previously made
+using <i>its</i> Makefile.
+</p>
+
+<p>
+Your solution also makes the pba.o file, because the gcc command is
+able to recognize (by the ".c" file extension) that the pba.c file
+needs compiling.
+</p>
+
+<p>
+While in the "fs/demo" directory, with this 
+<a href=demo/Makefile>Makefile</a> in place, issuing the command
+<pre>
+  make fs-demo
+</pre>
+will construct the command line interface program (named "fs-demo") for
+the demo database. And the command
+<pre>
+  make demo
+</pre>
+will construct all of the demo*.cgi programs.
+</p>
+
+<p><strong>Question</strong>
+2. "The command line interface seems to have a richer set of methods than the
+programatic interface, eg, add, edit, update and delete. Does the
+programmatic interface have these?"
+</p>
+
+<p><strong>Answer</strong>
+2. Yes. These will be documented soon. In the meantime, see the 
+<a href=demo.html>demonstration</a> example programs for some of them.
+</p>
+
+<p><a name=3><strong>Question</strong></a>
+3. "All the CGI examples are in C, using the programmatic interface (PI)
+rather than in Perl using the command line interface (CLI)? Is there a
+reason for this? Does anyone have any Perl scripts that they could share to
+help the learning?"
+</p>
+
+<p><strong>Answer</strong>
+
+3. There's always a reason ;-).
+Historically, we worked with Perl before working with C.
+This was five years ago, when we had the competent help of 
+<a href=mailto:thom@xmission.com>Thom Boyer</a>, who
+prefers using Perl.
+Most of the work in the last three and a half years has been done in C.
+</p>
+
+<p>
+Rather than supplying any specific Perl scripts, try adding the report
+which we used to <a href=Perl/report.ste>generate Perl scripts</a>
+to your METAD database.
+You will need to create a record in panel 6 of METAD to describe the
+environment in which these Perl scripts will be executed.
+The generated scripts require <a href=Perl/lib_pl.txt>lib.pl</a>, which
+is a Perl CGI library written by Thom.
+A more detailed explanation of all of this will be 
+<a href=perl.html>forthcoming</a>.
+</p>
+
+<p>
+In working with the CGI scripts in general, the Perl script
+<a href=Perl/status_pl.txt>status.pl</a> is a wonderful help in understanding
+the Common Gateway Interface (CGI).
+Install it in a directory from which your web server will execute Perl
+scripts and try using it with various URL's 
+and HTML forms to see what kind of information
+is passed from the browser to CGI scripts.
+You can also <a href=http://www.sanbachs.net/cgi-bin/status.pl>use it directly
+on our web server</a>.
+</p>
+
+<p><strong>Question</strong>
+4. "When using the CLI for add, edit, update, delete are the locking
+mechanisms that we would be used to in DP still observed?"
+</p>
+
+<p><strong>Answer</strong>
+4. Yes.
+In particular, error codes are returned to indicate some of the things
+that can happen in connection with the locking mechanisms of DP.
+For example, code 802 means the record was changed by another user
+on the network.
+One of the beauties of using Firestorm with DP databases is that web
+applications can share the same database files with users of the
+classic DataPerfect.
+</p>
+
+<p><strong>Question</strong>
+5. "The FS-xxxx application on a Linux system seems to expects the xxxx.str,
+xxxx.ind, data etc to be within the same directory, on the same system.
+Given that applications I would like to web enable would generally be
+sitting on a Netware server for multiple LAN connected PC users, what
+strategies if any could be employed to make that data available to the
+FS-xxxx application running on the Linux box."
+</p>
+
+<p><strong>Answer</strong>
+5. There are two separate questions. See also the answer to question 7, which
+is related.
+The pba.c file indicates the names of the datafiles.
+The .str file is <strong>not</strong> used by Firestorm, but the .ind, .txx,
+and panel data files are.
+Theoretically, you could put a path name in front of the filenames in
+the pba.c file and Firestorm would look for them there.
+We have never done this, but it should work.
+The only complication is for the panel data files.
+Consider these lines from the demo pba.c file (which give, respectively,
+the filenames "demo.001", "demo.ind", and "demo.txx"):
+<pre>
+  ...
+  8, 'd', 'e', 'm', 'o', '.', '0', '0', '1',
+  ...
+  char *ind_name = "demo.ind";
+  char *txx_name = "demo.txx";
+  ...
+</pre>
+While it is fairly obvious how to add a path name, for the .ind and .txx 
+files, the panel data filenames are given character by character, and
+the characters are preceded by the total length of the filename.
+For example, if the database files were in the path "/dp/", these
+lines from the demo pba.c file might be changed to look like:
+<pre>
+  ...
+  12, '/', 'd', 'p', '/', 'd', 'e', 'm', 'o', '.', '0', '0', '1',
+  ...
+  char *ind_name = "/dp/demo.ind";
+  char *txx_name = "/dp/demo.txx";
+  ...
+</pre>
+You must be very careful to get the length right, or the engine will
+fail in mysterious and unpredictable ways.
+Ensuring that the pba.c file is correct is the main reason we generate it
+using a DP report, rather than trying to build it by hand.
+It may be worth modifying the report rather than making these changes 
+by hand.
+</p>
+
+<p>
+After making this change, of course, the pba.c file will need to be
+recompiled, and any executables including it relinked.
+If someone tries this, please let us all know how it works.
+</p>
+
+<p><strong>Question</strong>
+6. "What security do the PI and CLI interface offer? I would normally use
+User ID's and menu's to provide some security for the application? The
+possibility of some web users deleting or updating data from the application
+is a little frightening? Eg malformed information requests?"
+</p>
+
+<p><strong>Answer</strong>
+6. There are no security mechanisms built in to these interfaces.
+We intend to document some of the things we have done in this regard, but
+this has not been a priority.
+</p>
+
+<p>
+The User ID panel and menus are just two of the features of DataPerfect
+that are not present in the Firestorm engine. Others that you will miss
+are computed fields and keep-a-total.
+We are hoping that Firestorm will generate enough interest and revenue to
+fund the development of a more powerful engine that would encompass many
+more features of DataPerfect.
+</p>
+
+<p>
+The danger you indicate is very real.
+Great care must be taken in writing CGI scripts that modify or delete
+(or even create) records, so that (unintentional or malicious)
+malformed requests cannot cause damage.
+Mostly, our scripts do not allow changes to the underlying database.
+A notable exception to this is our guest book, and there we have found that
+we need to exercise editorial control by removing offensive entries.
+</p>
+
+</p>
+
+<p><strong>Question</strong>
+7. "The sort of scenario I have in mind: Web pages sitting on a high
+availability, large bandwidth server at a web host. This web host supporting
+CGI, generally through Perl. One aspect of the web site being say client
+orders, or requests for information from a DP application running on a
+Netware or NT server at my client's premises, connected fulltime to the
+internet through a lower speed internet connection, eg permanent dial up,
+with a firewall of some type. Is this a realistic project for Firestorm?"
+</p>
+
+<p><strong>Answer</strong>
+7. This may or may not be realistic.
+Some of our applications duplicate the client's database on our web server.
+In this case updates are done periodically, 
+and the work can range from completely
+overwriting the old files with new ones to importing a transaction log.
+Other applications are hosted by a web server running on the same NT
+machine that contains the database for use through the LAN with the
+classic DataPerfect user interface.
+<p>
+
+<p>
+Both of these scenarios have worked well over the years.
+What you are suggesting is different and has not been attempted.
+A little background is in order here.
+Most commercial database mangement systems use a client/server architecture.
+</p>
+
+<p>
+It is a little known fact that DataPerfect is also client/server.
+Let me explain.
+A few years ago, when WordPerfect Office released their web-based email
+solution, they called it a "zero byte client."
+This was because they had discovered the marvel of programming for the web,
+which is that you don't have to write any client software to the baroque Windows
+interface. Also, because the client is provided for you (it is simply
+the web browser) you don't have to worry about porting your client software
+to other platforms, such as the Macintosh, etc.
+Again, this is provided by others.
+Also, your users don't have to install your client software, because they
+have already done so.
+</p>
+
+<p>
+DataPerfect has a "zero byte <i>server</i>" which is, simply, the shared file
+system. This is provided by others, the file server vendors.
+All that ships with DataPerfect is the client side.
+Your users have already installed the server side, and furthermore, 
+often have IS departments to care for it, besides!
+This is an unsung part of the genius of DataPerfect.
+If you have ever had to install and manage the server side of a commercial
+database system, you will <strong>know</strong> just how brilliant this is
+and what a debt of gratitude we all owe to Lew for making our lives easier
+and more pleasant!
+</p>
+
+<p>
+Whenever a piece of software uses the client/server architecture, you have to
+pay careful attention to the data communication between the client side and
+the server side.
+When using the classic DataPerfect, we don't have to worry about it, because
+everything works fine (as long as there are no bugs in the file system
+itself).
+</p>
+
+<p>
+With Firestorm, even though the engine is running on a web server, it is 
+playing the same "client" role that DataPerfect plays classically.
+For this to work properly, the engine and the file server that holds the
+database files must communicate using the standard LAN file server
+protocols.
+These are <strong>not</strong> standard Internet protocols.
+</p>
+
+<p>
+To my knowledge there are two Internet protocols that can carry the data
+required between a DataPerfect client and a file server.
+These are NFS (the Network File System), and Samba.
+If you set up a Samba server on your customer's machine, you should,
+theoretically, be able to not only run Firestorm applications on your
+web server, but also
+DataPerfect itself (assuming your web server can run DataPerfect--if 
+only DP were available for Linux--oh well).
+However, you make a point that the customer connection to the Internet would
+be slow. Even though DataPerfect (and hence Firestorm) is very efficient
+in the traffic it generates with the file system, this traffic is still
+considerable, and when wrapped in NFS would perhaps be more than a slow
+connection could handle. Perhaps Samba is more efficient.
+We investigated NFS at one time, but have not looked into Samba.
+</p>
+
+<p><strong>Question</strong>
+8. "I downloaded a free compiler from the following address:
+<address>
+<a href=http://www.cs.virginia.edu/~lcc-win32/>http://www.cs.virginia.edu/~lcc-win32/</a>
+</address> 
+The program expects you to work in terms of 'projects' and I don't know if your source files should be considered one or more projects.  I also don't know what the '.h' files are or what to do with them.
+</p>
+
+<p>
+What I'm saying here is that I don't know how to compile the source code.  And now that I've been thinking about it, I'm wondering why I need to at all.  Couldn't you just send the executables?"
+</p>
+
+<p><strong>Answer</strong>
+8. You would use a project for each of your databases. Each project would
+share the Firestorm files. The .h files are definition files that are
+required by the source code files (the .c ones). 
+Place them in the same directory with the .c files.
+</p>
+
+<p>
+We can't just send the executables for two reasons. First, we would have
+to make a lot of different ones, as each system has different executable
+formats and system libraries, so it's quite a big operation. Second, we
+haven't compiled it on a Windows system for a long time, so we don't have
+an up to date executable at hand. Besides all that, an executable has to
+include the PBA for your database as an integral part of it.
+</p>
+
+<p>
+In the METAD database, you will need to
+run the three reports in order after having imported the .{X} file
+produced by METADXP.COM. This will create a file named PBA.C in the
+subdirectory for your database. In the project for your database, you
+would then include the PBA.C file as one of the project files.
+</p>
+
+<p>
+Your compiler will produce a .OBJ file for each of the .c
+files. All of these will be combined into one .EXE file, which is the
+executable. If your database is named, say, PHONE.STR, you would have a
+project named phone, and include in it dot.c, engine.c, dpif.c, map.c,
+and dp.c, as well as all of the .h files except fs.h. These files would
+all be included from the fs directory, whereas your project files would
+be in a subdirectory of fs named phone. From the phone subdirectory, you
+would include the pba.c file generated by METAD. To do that, you will
+have been working in a directory named metad with its own subdirectory
+named phone. So, once the pba.c file is generated there, you'll need to
+copy it over to the compiler's fs\phone subdirectory. Then have the
+project make the executable, and name it fs-phone.exe (still following
+the standard Firestorm naming conventions). This will be an executable
+<a href=cli.html>command line interface</a> program.
+</p>
+
+<p>
+When you go to make a CGI script, it will most likely need its own
+project (make it a sub-project of the phone project if your compiler has
+the concept of sub projects). In this project, include all of the fs
+files you included in the phone project (except you must leave out map.c
+and dp.c), and also fs.h, fsCore.c, and fsMain.c. Also, the pba.c file
+from the phone project. This time you shouldn't need to copy it, but
+just have your compiler reach for it where it is located in fs\phone.
+Here also, you will include the source file for your CGI script, named,
+say, phone-action.c. When you do a build (sometimes called make) of this
+project, it will generate an executable which you should have it name
+phone-action.exe and is the CGI script for your web server to use.
+</p>
+
+<p><strong>Question</strong>
+9. "I'm also confused about the 5 character limit.  What is happening there?"
+</p>
+
+<p><strong>Answer</strong>
+9. This began long ago with a personal
+convention used by one of us, in which DP databases are named with a 5
+character name. Then the panel data files are named with
+the same name dot 001, 002, etc.
+This leaves "room" in the DOS 8.3 naming system for names like
+DNAME001.EXP for files created by the built-in short reports whenever a
+field needs to be added to panel 001, etc. 
+This convention was adopted because when you 
+make a <i>lot</i> of DP databases, and they go through a lot of iterations
+before they are finalized, it is an easy way to remember all
+the file names that are needed. 
+Now, we don't mean to impose this
+convention on the whole community, but the 5 character limit just got
+built in to a lot of assumptions as the Firestorm project unfolded.
+We're stuck with it for now. It shouldn't be too much of a constraint.
+You don't need to rename your own .STR files, just decide on a 5
+character abbreviation and use that inside of METAD and as subdirectory
+names. And CGI scripts can have names as long as you want. By
+convention, we choose to have them all begin with the 5 character
+database name, so that we can keep track of them. But that is not a
+requirement for anyone else.
+</p>
+
+<HR>
+<H2>Contacting sanbachs.NET</h2>
+<P>Sign or browse our
+<A HREF="http://cgi.aros.net/cgi-bin/cgiwrap/~sanbachs/ngb1.cgi?WsoID=1&WsID=5">guest book</A>.
+</P>
+<address>
+<a href="mailto:webmaster@sanbachs.com">webmaster@sanbachs.com</a><br>
+<a href="mailto:l.jbastian@worldnet.att.net">A. Lewis Bastian, Jr.</a><br>
+<a href="../bruce/resume.html">Bruce Conrad</a><br>
+<a href="mailto:thom@xmission.com">Thom Boyer</a>
+</address>
+<HR>
+<H3>Disclaimer</H3>
+*<FONT COLOR="#0000FF">DataPerfect&reg;</FONT>
+is a copyright of Novell, Inc.
+sanbachs.NET is not affiliated with Novell, Inc.<BR>
+<HR>
+<img src="http://www.sanbachs.net/cgi-bin/countg.cgi?Name=fsfaq">
+visitors since December 1, 2000.
+</td>
+</tr>
+</table>
+<h5 align=center>Copyright &#169; 2001 sanbachs.NET</h5>
+<!-- Start Quantcast tag -->
+<script type="text/javascript">
+_qoptions={
+labels:"firestorm",
+qacct:"p-74TfK8Z7JORIY"
+};
+</script>
+<script type="text/javascript" src="http://edge.quantserve.com/quant.js"></script>
+<noscript>
+<img src="http://pixel.quantserve.com/pixel/p-74TfK8Z7JORIY.gif" style="display: none;" border="0" height="1" width="1" alt="Quantcast"/>
+</noscript>
+<!-- End Quantcast tag -->
+</body>
+</html>

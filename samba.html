@@ -1,0 +1,248 @@
+<html>
+<head>
+<title>Firestorm – Samba</title>
+</head>
+
+<body>
+<table>
+<tr>
+<td valign=top width=15%> </td>
+<td>
+<table bgcolor="#FFFFFF" cellpadding=0 cellspacing=0 width=100%>
+<tr>
+<td align=left>
+<strong><font size=+5>sanbachs.NET</font></strong><br>
+<strong><font size=+1>Serving the DataPerfect* Community</font></strong>
+</td>
+<td align=right><a href=http://www.dataperfect.nl/><img src=../logo.gif width=318 height=61 border=0></a></td>
+</tr>
+</table>
+<HR>
+<table width=100%>
+<tr>
+<td>
+<a href=../index.html>Home</a> >
+<a href=index.html>Firestorm</a> >
+<a href=projects.html>Projects List</a> >
+Samba
+</td>
+</tr>
+<tr>
+<td align=right>Last updated: December 18, 2000</td>
+</tr>
+</table>
+
+<h1>Firestorm – Samba</h1>
+
+<p>
+[ This is an adaptation of a message posted to the DP users group
+mailing list on Tuesday, December 12, 2000 by Brian Hancock. ]
+</p>
+
+<h2>Aim</h2>
+To access a DP application running on a Novell LAN, to provide some
+information to the general public via a web browser across the internet.
+
+<h2>Issues</h2>
+<ol>
+<li>
+My client's LAN is full-time connected to the internet by a dial up modem
+connection, and is protected from the outside world by a very basic router
+and NAT, Network Address Translation.
+<li>
+My client's web pages are located on a web host exterior to my client's
+network.
+<li>
+The web host although allowing Perl scripts to run on the server will not
+allow C programs like the Firestorm executables.
+<li>
+My client uses a DP application for various purposes, and the sort of
+public would require will be order status information or
+courier consignment information, both of which are available within the DP
+application. At present clients will phone in and a client service person
+will check the database and give them the information over the phone.
+<li>
+They have a single Novell server, and for security reasons they would not
+be happy with any exterior access directly to this box.
+<li>
+They want a relatively inexpensive solution.
+</ol>
+<p>
+This sort of scenario is probably not uncommon to a lot of people.
+<p>
+<h2>Progress</h2>
+I decided to use Linux as the platform for providing CGI scripting and to
+execute the Firestorm application. I have a number of reasons for this but
+they all primarily relate to cost. For a start Linux gives me a web server,
+and even a C compiler together with the operating system for very little
+cost, and it can be implemented on low end PC hardware. I have not used
+Linux or Unix before so I am going through a learning curve, and any Linux
+people out there will readily be able to point to my various deficiencies.
+<p>
+Getting Firstorm to work on the Linux box was no problem. By following the
+instructions on the 
+<a href=usage.html>usage</a>
+of Firestorm
+you will get a C source code.
+The pba.c file is created by the Metad application which you can download.
+Metadxp.com is used to create a file based on its analysis of the target
+databases .STR file. This file is imported into a DP Metad database, and
+after a little massaging through various reports creates a pba.c file. The
+second part of this process is compiling the resultant file and linking it
+with a number of object files, as detailed in the Firestorm usage
+instructions and you are left with an executable program. This executable
+program expects the .STR, IND, .TXX and panel file to be in the same folder.
+To test it out I just copied the target DP application to the Linux box and
+ran the exectuable program using the 
+<a href=cli.html>command line interface</a>.
+
+<p>
+At this point there are two ways to go, instead of having the DP application
+sitting on the Netware server I could have moved its files to the Linux
+server. However I wanted them to be safely tucked away on the Novell Netware
+server.
+<p>
+At home where I am doing this work I do not have a Netware server, but I do
+have a WinNT box, as well as Win95/98 machines. So my first step has been to
+look at Samba.
+<p>
+Samba is the name used to provide Microsoft Networking service to the Linux
+environment. You can set Linux up to either mimic a Microsoft Network server
+or client. The configuration of the server is reasonably complicated. The
+Samba server is started by executing 
+<pre>
+  smb start
+</pre>
+and it uses the smb.conf
+file to define shares, permission and other security. The Samba client by
+contrast is much easier to set up, and you do not need the Samba server to
+be running.. In its simplest form to gain access to a Win95/98 share is very
+easy, the command line 
+<pre>
+  smbclient  // ComputerName/ShareName  password
+</pre>
+
+gives
+you an FTP like prompt for accessing the Windows share. However this is not
+that useful for what I want to do.
+<p>
+An alternative is the smbmount command which mounts the Windows share as
+though it were a directory on the Linux box. To use this it was necessary to
+create an empty folder on the Linux box and then to issue the command:
+
+<pre>
+  smbmount   // ComputerName/ShareName /LinuxFolder name
+</pre>
+For example I
+created
+a folder with in the /mnt folder named WinPC1 and issued the command
+
+<pre>
+  smbmount  // WinPC1/MyApp /mnt/WinPC1
+</pre>
+after which I entered the password.
+You only need a read-only share if you do not wish Firestorm to modify, add
+or delete any data, but just display it. Read-only is fine for me because it
+give that little bit extra security. At this point the /mnt/WinPC1 folder
+appears in the Linux file structure, except that the files are on a remote
+machine, but you would never know, it just looks like a normal Linux folder
+unless you were to check it properties.
+<p>
+I then copied Firestorm executable created after compiling the pba.c source
+and copied it on to the Windows machine in the same folder as the rest of
+the application, and it worked fine. (I termporarily made my share Full
+Access to do this).
+<p>
+I have been very happy with the results.
+<p>
+The next stage for me is to find a Novell client for Linux, there are a
+number of clients around for this purpose however I think most of them only
+work in Bindery emulation mode, and not the full NDS (Netware Directory
+Services) however Novell is soon to release a full blown Linux client and I
+am hoping that it has a similar functionality to the smbmount (Samba mount
+client).
+<p>
+After  that I will write the HTML, and CGI programs, but I do not
+expect that to be difficult.
+<p>
+<h2>Security</h2>
+Letting the outside world onto your network is not necessarily a great thing
+to do.  I have been using a very inexpensive ACER dial up internet router.
+It provides NAT service so that you have private IP addressing on your LAN,
+and that is translated into the public address of the router before sending
+off to the internet. The external server returns the request to the router's
+IP address and NAT resolves it back to the requesting computer on the
+private network.  The ACER router/modem has a Virtual Server configration
+where you can route requests made to the a specific port on the routers
+public IP address and route them to a computer on the internal network.
+<p>
+My clients web pages will still be able to reside on the external web host,
+however for the CGI requests for information from the DataPerfect
+application I can direct it to our own network.For CGI I can set the router
+to take all requests on port 80 (ie HTTP) and transfer them to the Linux
+box, and the Apache server will process the request using script set up to
+use Firestorm. These CGI script will be pointed to the Linux server on the
+clients network rather than back to the web hosts computer, although it may
+be possible for me to use the CGI from their server which would totally hide
+the access to the client network from the web client. Using the router to
+only accept Port 80 means the other services on the network are effectively
+blocked from public access. I certainly wouldn't recommend this on network
+with highly sensitive data. After setting up such a system you might like to
+point a browser on the internal private network to 
+<a href=http://www.grc.com>http://www.grc.com</a>
+where
+you can have your network tested for points of vulnerability. If the only
+point of contact open is port 80, when you do that test, you can probably
+rest reasonably easily.
+<p>
+(As a point of aside try the 
+<a href=http://www.grc.com>http://www.grc.com</a>
+on your normal dial up or
+cable connection when you are not using a router and you may be surprised
+what things the outside world can see on your computer)
+<p>
+I will keep everyone updated on how the project pans out. Once the technical
+issues are done I still have to convince my client that this is a good idea,
+so it may be some time before it goes public.
+<p>
+<address>
+<a href=mailto:brileigh@ozemail.com.au?Subject=Samba>Brian Hancock</a>
+</address>
+
+<HR>
+<H2>Contacting sanbachs.NET</h2>
+<P>Sign or browse our
+<A HREF="http://cgi.aros.net/cgi-bin/cgiwrap/~sanbachs/ngb1.cgi?WsoID=1&WsID=5">guest book</A>.
+</P>
+<address>
+<a href="mailto:webmaster@sanbachs.com">webmaster@sanbachs.com</a><br>
+<a href="mailto:l.jbastian@worldnet.att.net">A. Lewis Bastian, Jr.</a><br>
+<a href="../bruce/resume.html">Bruce Conrad</a><br>
+<a href="mailto:thom@xmission.com">Thom Boyer</a>
+</address>
+<HR>
+<H3>Disclaimer</H3>
+*<FONT COLOR="#0000FF">DataPerfect&reg;</FONT>
+is a copyright of Novell, Inc.
+sanbachs.NET is not affiliated with Novell, Inc.<BR>
+<HR>
+<img src="http://www.sanbachs.net/cgi-bin/countg.cgi?Name=fssamba">
+visitors since December 17, 2000.
+</td>
+</tr>
+</table>
+<h5 align=center>Copyright &#169; 2001 sanbachs.NET</h5>
+<!-- Start Quantcast tag -->
+<script type="text/javascript">
+_qoptions={
+labels:"firestorm",
+qacct:"p-74TfK8Z7JORIY"
+};
+</script>
+<script type="text/javascript" src="http://edge.quantserve.com/quant.js"></script>
+<noscript>
+<img src="http://pixel.quantserve.com/pixel/p-74TfK8Z7JORIY.gif" style="display: none;" border="0" height="1" width="1" alt="Quantcast"/>
+</noscript>
+<!-- End Quantcast tag -->
+</body>
+</html>

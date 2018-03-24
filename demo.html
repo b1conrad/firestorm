@@ -1,0 +1,451 @@
+<html>
+<head>
+<title>Firestorm – Demonstration</title>
+</head>
+
+<body>
+<table>
+<tr>
+<td valign=top width=15%> </td>
+<td>
+<table bgcolor="#FFFFFF" cellpadding=0 cellspacing=0 width=100%>
+<tr>
+<td align=left>
+<strong><font size=+5>sanbachs.NET</font></strong><br>
+<strong><font size=+1>Serving the DataPerfect* Community</font></strong>
+</td>
+<td align=right><a href=http://www.dataperfect.nl/><img src=../logo.gif width=318 height=61 border=0></a></td>
+</tr>
+</table>
+<HR>
+<table width=100%>
+<tr>
+<td>
+<a href=../index.html>Home</a> >
+<a href=index.html>Firestorm</a> >
+<a href=firestorm.html>Principles of
+Operation</a> >
+<a href=fs.html>Programmatic Interface</a> >
+Demonstration
+</td>
+<tr>
+<td align=right>Last updated: October 31, 2001</td>
+</tr>
+</table>
+
+<h1>Firestorm – Demonstration</h1>
+
+<p>
+In this demonstration, we will show how to take a simple DataPerfect database
+and create a web application based on it.
+When complete, the demonstration will consist of:
+<ol>
+<li>a simple program to print all the records
+<li>a program to generate an HTML page showing all the records
+<li>a CGI script to generate an HTML page showing all the records
+<li>a CGI script to add one to a field of a particular record, creating it
+if necessary
+<li>a CGI script to generate an HTML page showing a subset of the records
+</ol>
+
+<p>
+In this demonstration, we will use
+<a href=demo/demo.ste>a simple DataPerfect database</a>
+with one panel, two fields, and one index.
+The fields are P1F1 (named "Name"), formatted A8;;T, and
+P1F2 (named "Count"), formatted GZZZZZZZZZZZZZ9;;B.
+The panel is indexed by Name.
+</p>
+
+<p>
+This database would require the PBA description shown in the file
+<a href=demo/pba.c>pba.c</a>.
+Don't be alarmed by the apparent complexity of this file.
+It is created automatically for you by the METAD database,
+as explained in the <a href=usage.html>usage guide</a>.
+</p>
+
+<h2>Demonstration (Part One)</h2>
+
+<p>
+A program to open this database, position to the first record in the
+panel and print out all of the records is shown here.
+The line numbers are not a part of the program, but for reference in
+the discussion that follows.
+</p>
+
+<pre>
+ 1  #include &lt;stdio.h&gt;
+ 2  #include "../fs.h"
+ 3
+ 4  void main()
+ 5  {
+ 6    FS_panel p1;
+ 7    int err;
+ 8
+ 9    FSopen();
+10    p1 = FSsetPanel(1);
+11    err = FSfirstRec(p1,1);
+12    while (err == FS_OK) {
+13      printf("Name: %s Count: %s\n",
+14        FSfield(p1,1)->field_data,
+15        FSfield(p1,2)->field_data);
+16      err = FSnextRec(p1);
+17    }
+18    FSclose();
+19  }
+</pre>
+
+<p>
+Here is an explanation of the example program:
+</p>
+
+<dl compact>
+<dt>1<dd>C preprocessor directive to include standard input/output definitions
+<dt>2<dd>C preprocessor directive to include Firestorm definitions
+<dt>4<dd>the main program begins here
+<dt>6<dd>declaration of a variable named p1 that represents the first panel
+<dt>7<dd>declaration of a variable to hold an error code
+<dt>9<dd>call the FSopen function to open the database
+<dt>10<dd>setup the first panel for use
+<dt>11<dd>call the FSfirstRec function to position to the first record
+using index one
+<dt>12<dd>while there is a record left to process
+<dt>13<dd>print two field values (each %s is replaced by a value)
+<dt>14<dd>get the field data value for panel one field one
+<dt>15<dd>get the field data value for panel one field two
+<dt>16<dd>call the FSnextRec function to position to the next record if any
+<dt>17<dd>end of the while loop
+<dt>18<dd>call the FSclose function to close the database
+<dt>19<dd>end of the main program
+</dl>
+
+<p>
+Once you have created the 19 line program and saved it in a file named
+<a href=demo/demo.c>demo.c</a>, 
+you will need to compile it, as described in the
+<a href=usage.html>usage guide</a>.
+When it is run, the program will produce output like this:
+</p>
+
+<pre>
+Name: CDIB01 Count: 1174230
+Name: CDIB02 Count: 210049
+Name: CDIL01 Count: 6095288
+Name: CDIL02 Count: 91093
+</pre>
+
+<p>
+To get the same output from DataPerfect, you would have used a
+<a href=demo/demo-report.txt>very simple report</a>.
+Note: to see this report, you can save the .STE file that defines 
+<a href=demo/demo.ste>the simple DataPerfect database</a>
+and run DPIMP, then DP DEMO, 1 (to recreate TXX file),
+1 (to recreate IND file), 
+Enter (to go to the panel),
+Shift-F7 (to go to the report list),
+Down-arrow (to go the sample report),
+Enter (to go to the report definition page),
+and, finally, 8 (to see the report form).
+Then, press down-arrow three times, and control-right-arrow three times.
+</p>
+
+<p>
+Programming with Firestorm is going to be different than programming in
+DataPerfect.
+But, it's not really all that much harder.
+For example, refer to the sample program above, and compare it with
+the simple report.
+For a report, you specify the panel (program, line 10).
+You specify which index to use, and whether in ascending or descending
+order (program, line 11). For descending order, line 11 would have called
+the FSlastRec function, and line 16 the FSprevRec function.
+Page headers and footers tend to be used differently on the web.
+Anything your program prints before the loop (before line 12) would appear
+in the output before the first record.
+Conversely, anything your program prints after the loop (after line 17)
+would appear after the last record printed.
+In Firestorm, we have to specify the REPORT BODY loop ourselves (program,
+lines 12, 16, and 17).
+</p>
+
+<p>
+To actually print something, we include it in the quoted string argument
+to the ANSI C printf function (program, line 13).
+Lines end with backslash n (for a newline character).
+Whenever we want to place a field value, we put a percent s into the
+quoted string.
+For each percent s, we must include an extra argument for the printf 
+function.
+Each such argument identifies the panel and field and calls for the 
+field data.
+Compare "P1F2" with "FSfield(p1,2)->field_data" to see the comparison
+(program, line 15).
+</p>
+
+<h2>Demonstration (Part Two)</h2>
+<p>
+To produce a page suitable for display in a browser, we would need a
+program that produces valid HTML.
+Such a program is <a href=demo/demo2.c>demo2.c</a>.
+Notice that it differs from demo.c only in that it prints many more
+lines, all of them HTML tags.
+The ouput of the demo2.c program looks like <a href=demo/demo2.html>this</a>.
+</p>
+
+<p>
+It would be a good exercise to look at the Page Source for the
+program output, and compare it with the program.
+Be sure you can explain to yourself where each line in the output
+comes from the program.
+</p>
+
+<h2>Demonstration (Part Three)</h2>
+<p>
+A very small change to demo2.c will produce
+<a href=demo/demo3.c>demo3.c</a>.
+This is the addition of a line that says "Content-type: text/html" and
+a completely blank line as the two very first lines produced by the program.
+</p>
+
+<p>
+Whereas demo2.c could be used to produce a file named demo2.html, which
+could then be placed on a web server, demo3.c can actually
+<strong>run</strong> on a web server and produce its output on demand.
+It has become what is known as a "CGI script."
+</p>
+
+<p>
+Exactly how to write a URL that invokes a CGI script depends on the way
+the web server is set up.
+On this web site (hosted by sanbachs.NET), the URL to invoke demo3
+looks like this:
+<a href=http://www.sanbachs.net/cgi-bin/demo3.cgi>http://www.sanbachs.net/cgi-bin/demo3.cgi</a>.
+</p>
+
+<p>
+The 
+<a href=demo/demo2.html>output of demo2.c</a>
+and the
+<a href=http://www.sanbachs.net/cgi-bin/demo3.cgi>output
+of demo3.c</a>
+look very similar in a web browser.
+But, there is an important difference between the two.
+You must run demo2 from time to time to produce its output, demo2.html.
+Then, you must upload the file demo2.html to your web server.
+The data displayed in this page doesn't change until the next time you do this.
+This is sometimes called a "static page."
+On the other hand,
+the person viewing the URL that invokes the demo3.cgi program causes the
+demo3 program to run <strong>at that very moment</strong>, so the data
+they see is completely up to date.
+Furthermore, you are not required to take any action.
+</p>
+
+<h2>Demonstration (Part Four)</h2>
+<p>
+If you examine the <a href=demo/demo4.c>demo4.c</a> program,
+you will notice that it is very similar to demo3.c, with the following
+additions:
+<pre>
+  Field_Value *Demo = NewField(1,'9',4,"DEMO");
+  Field_Value *One = NewField(2,'3',1,"1");
+</pre>
+
+<p>
+These lines create two new field values.
+For field one ('9' for type A or U), the string "DEMO" of length 4.
+For field two ('3' for type G, H or N), the string "1" of length 1.
+<pre>
+  err = FSequalRec(p1,FSifList(p1,1,Demo));
+  if (err == FS_OK) {
+    err = FSupdateField(p1,FSifList(p1,1,Demo),2,'+',One);
+  } else {
+    err = FScreateRec(p1,FSfList(p1,Demo,One));
+  }
+</pre>
+
+<p>
+First we look for a record in panel one, using index one, that has the
+value "DEMO" in the first field of the index.
+If we find such a record, we update field two of that record by adding ('+')
+the value "1" to the value already in that field.
+If, on the other hand, we didn't find such a record, we create a new
+record in panel one, consisting of the field values in Demo and One
+in that order.
+<pre>
+  printf("&lt;a href=http://www.sanbachs.net/firestorm/>");
+  printf("&lt;font face=Arial>Powered by Sanbachs Firestorm&lt;/font>&lt;/a>\n");
+</pre>
+
+<p>
+These lines produce a link to the Firestorm home page, as we ask you to do
+when using Firestorm with your DataPerfect databases on the Internet.
+</p>
+
+<p>
+The program demo4.c is also a CGI script.
+To run it, you would use this URL:
+<a href=http://www.sanbachs.net/cgi-bin/demo4.cgi>http://www.sanbachs.net/cgi-bin/demo4.cgi</a>.
+If you click the reload button on your browser, you will see the count value
+for DEMO increasing.
+At this point it is worth going back to Part Three of the demonstration 
+and comparing the output of demo2.c with the output of demo3.c to notice that
+they are now different.
+The demo2.c program was run to produce the static HTML file, demo2.html, some
+number of days ago.
+It captured a static "snapshot" of the data in the database.
+On the other hand, the demo3.c program is run when you click on the
+"output of demo3.c" link and provides an up to the minute view of
+the data in the database.
+</p>
+
+<p>
+As a courtesy to other readers of this demonstration, please remove the
+DEMO counter after you are finished playing with it, by running 
+<a href=http://www.sanbachs.net/cgi-bin/demo-reset.cgi>the
+demo-reset CGI script</a>.
+For the curious, feel free to look at the source code of
+<a href=demo/demo-reset.c>demo-reset.c</a>.
+</p>
+
+<h2>Demonstration (Part Five)</h2>
+<p>
+In this part of the demonstration, we introduce several new things.
+Probably the most important of these is the ability to accept input from the
+user to modify the page that is generated in response.
+The URL for the <a href=demo/demo5.c>demo5.c</a> program is
+<a href=http://www.sanbachs.net/cgi-bin/demo5.cgi?Prefix=>href=http://www.sanbachs.net/cgi-bin/demo5.cgi?Prefix=</a>
+which is different from the others in that it contains a question mark.
+This makes it a "query" URL.
+Try modifying the URL with different things after the "?Prefix=",
+such as C, D, CDI, CDIB, etc.
+</p>
+
+<p>
+In practice, you would not expect your users to modify the URL when making
+queries against your database.
+Instead you would provide them with a query form, such as
+<a href=demo/demo5.html>demo5.html</a>.
+The HTML code to display this form has been kept as simple as possible.
+Look at it using your browser's menu to View Page Source. 
+</p>
+
+<p>
+The part of the program that allows user input is
+<pre>
+char *WhatFilename = "what-demo.txt";
+
+Field_Value *Prefix;
+
+FS_CGI_arg FSexpect[] = {
+  { "Prefix", &Prefix, ""},
+  NULL
+};
+
+int FSquery()
+</pre
+
+<p>
+You'll notice that instead of being named "main" this program is
+named "FSquery" which means that the main program must be defined elsewhere.
+This program must be linked with what is called the "CGI Interface" of
+the second diagram of the Principles of Operation page. 
+On that same diagram, the program called "Custom CGI program" is our
+demo5.c program, which implements the FSquery function.
+</p>
+
+<p>
+It interacts with the main program by setting up two variables: "WhatFilename"
+and "FSexpect".
+The first of these gives the name of a file which will contain an access log
+recording every call to the CGI script.
+This file can get rather long, but you are welcome to
+<a href=http://www.sanbachs.net/firestorm/demo/what-demo.txt>look at it</a>.
+Towards the end of it, you should be able to see the queries you made
+to it while working with it earlier.
+The second variable, FSexpect, is an array, or list, of structures 
+(of type FS_CGI_arg) which tell the main program what inputs you are
+expecting.
+In this program we are only expecting one, named "Prefix", to be stored in 
+the Field_Value variable named "Prefix", with the value of "" (an empty
+string) if the user does not provide it.
+</p>
+
+<p>
+Instead of positioning to the first record of the panel, this program
+identifies a subset of the records, consisting of those records in index
+one which match the Prefix:
+<pre>
+  err = FSsubFirstRec(p1,FSifList(p1,1,Prefix));
+</pre>
+
+<p>
+Having set up the subset, we call the FSrecCount function to learn how
+many records are in the subset:
+<pre>
+  recordCount = FSrecCount(p1);
+</pre>
+
+<p>
+This number is used later on in the program to produce different text; either
+"No records matching" the Prefix, or "# record(s) matching" the Prefix.
+<pre>
+  if (recordCount == 0) {
+    printf("No records matching \"%s\"<BR>\n",
+      Prefix->field_data);
+  } else {
+    printf("%d record%s matching \"%s\"\n",
+      recordCount, 
+      (recordCount==1) ? "" : "s",
+      Prefix->field_data);
+    ...
+  }
+</pre>
+
+<p>
+The ellipsis (...) is almost exactly the same code that produced 
+the HTML table of record values in the demo3.c and demo4.c programs.
+The difference is that, at the bottom of the while loop, instead of
+calling the function FSnextRec (to get the next record in the panel),
+it calls the function FSsubNextRec (to get the next record in the subset).
+</p>
+
+<HR>
+<H2>Contacting sanbachs.NET</h2>
+<P>Sign or browse our
+<A HREF="http://cgi.aros.net/cgi-bin/cgiwrap/~sanbachs/ngb1.cgi?WsoID=1&WsID=5">guest book</A>.
+</P>
+<address>
+<a href="mailto:webmaster@sanbachs.com">webmaster@sanbachs.com</a><br>
+<a href="mailto:l.jbastian@worldnet.att.net">A. Lewis Bastian, Jr.</a><br>
+<a href="../bruce/resume.html">Bruce Conrad</a><br>
+<a href="mailto:thom@xmission.com">Thom Boyer</a>
+</address>
+<HR>
+<H3>Disclaimer</H3>
+*<FONT COLOR="#0000FF">DataPerfect&reg;</FONT>
+is a copyright of Novell, Inc.
+sanbachs.NET is not affiliated with Novell, Inc.<BR>
+<HR>
+<img src="http://www.sanbachs.net/cgi-bin/countg.cgi?Name=fsdemo">
+visitors since November 23, 2000.
+</td>
+</tr>
+</table>
+<h5 align=center>Copyright &#169; 2001 sanbachs.NET</h5>
+<!-- Start Quantcast tag -->
+<script type="text/javascript">
+_qoptions={
+labels:"firestorm",
+qacct:"p-74TfK8Z7JORIY"
+};
+</script>
+<script type="text/javascript" src="http://edge.quantserve.com/quant.js"></script>
+<noscript>
+<img src="http://pixel.quantserve.com/pixel/p-74TfK8Z7JORIY.gif" style="display: none;" border="0" height="1" width="1" alt="Quantcast"/>
+</noscript>
+<!-- End Quantcast tag -->
+</body>
+</html>
+

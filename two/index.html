@@ -1,0 +1,100 @@
+<HTML>
+<HEAD>
+<TITLE>Firestorm Two</TITLE>
+</HEAD>
+<BODY>
+<H1>Firestorm Two</H1>
+<P>
+With Firestorm Two, you can
+use DataPerfect to create a dynamic browser-based application.
+This is based on the latest version of DataPerfect,
+DP2.6x
+(available <A HREF="dp26x.zip">here</A>).
+</P>
+<P>
+In a browser-based application, the user experience with the
+application takes place on a <B>user machine</B> running browser software.
+Possible browsers include Mozilla, Mozilla Firefox, Opera,
+Netscape Communicator, and Microsoft Internet Explorer.
+</P>
+<P>
+The application itself is a DataPerfect application which
+is connected to webserver software that runs on a <B>server machine</B>.
+</P>
+<P>
+As described in the possible configurations, it is possible for the
+<B>server machine</B> to be either:
+<UL>
+<LI>the same machine as the <B>user machine</B>,</LI>
+<LI>a server on a LAN,</LI>
+<LI>or a server on the Internet.</LI>
+</UL>
+</P>
+<H2><U>Possible Configurations</U></H2>
+<H3>Single Machine</H3>
+<P>
+This single machine will be both the 
+<B>user machine</B> and the <B>server machine</B>.
+You will need to have rights to download and install software on this machine.
+</P>
+<H3>Local Area Network (LAN)</H3>
+<P>
+One machine on the LAN will be the <B>server machine</B>.
+Ideally, this should be the same machine on which the database files reside.
+This machine, and any other machine on the LAN, can be the <B>user machine</B>.
+You will need to have rights to copy new versions of the database
+onto the server machine.
+</P>
+<H3>The Internet</H3>
+<P>
+A machine on the Internet will be the <B>server machine</B>.
+You will need to have rights to upload and run CGI scripts on this machine.
+Any machine with an Internet connection, anywhere in the world,
+can be the <B>user machine</B>.
+</P>
+<H2><U>Software Installation</U></H2>
+<P>
+Once you have identified the <B>server machine</B>,
+you will need to install and configure webserver software.
+One possibility for Windows operating systems is the
+<A HREF=http://www.keyfocus.net/kfws/>KF Web Server</A>.
+For Linux machines, consider
+<A HREF=http://httpd.apache.org/dist/httpd/>Apache</A>.
+</P>
+<P>
+On the same machine as the webserver, you will need the FS2 executable program
+(available <A HREF="javascript:alert('Not yet available');void 0">here</A>),
+and the DPWEB database files
+(available <A HREF="DPWEB.STE">here</A>).
+You will need to configure the webserver software to associate
+the FS2 executable program with the ".STR" filename extension.
+</P>
+<P>
+Create your application database, and make entries in the
+DPWEB database to describe your application.
+You can do this either directly with DataPerfect, or through
+the DPWEB browser-based application
+(which is, itself, implemented as a Firestorm Two application).
+</P>
+<H2><U>Security and Multi-user Considerations</U></H2>
+<P>
+An initial design document is 
+<A HREF=DPWEB.rtf>available for comment</A>.
+A <A HREF=tutorial/index.html>tutorial</A> on the initial design
+of the DPWEB database is also available for comment.
+</P>
+<!-- Start Quantcast tag -->
+<script type="text/javascript">
+_qoptions={
+labels:"firestorm",
+qacct:"p-74TfK8Z7JORIY"
+};
+</script>
+<script type="text/javascript" src="http://edge.quantserve.com/quant.js"></script>
+<noscript>
+<img src="http://pixel.quantserve.com/pixel/p-74TfK8Z7JORIY.gif" style="display: none;" border="0" height="1" width="1" alt="Quantcast"/>
+</noscript>
+<!-- End Quantcast tag -->
+</BODY>
+</HTML>
+

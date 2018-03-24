@@ -1,0 +1,143 @@
+
+DPWEB.STR (DPWEB)                                               09/22/04 05:06
+
+   P1 DPWEB.001 Application Information
+
+      P1F1   Application Code                         A12;;T
+      P1F2   Application Name                         A60;;T
+      P1F3   BCP Number                               GZZ9
+      P1F4   User ID Panel Number                     GZZ9
+      P1F5   Session ID Field Number                  GZ9
+      P1F6   Session Timeout                          GZZ,ZZ9
+      P1F7   Session ID Parameter Name                A12
+      P1F8   User ID Parameter Name                   A12
+      P1F9   Password Parameter Name                  A12
+      P1F10  Login Page Code                          A12
+      P1F11  Login Report Number                      GZZ9
+      P1F12  Pages link
+      P1F13  Owner ID                                 A20;;T
+      P1F14  Page Count                               GZZZZ9::H
+
+      I1 by Application Code
+             1 Application Code
+      I2 by Application Name, Application Code
+             2 Application Name
+             1 Application Code
+      I3 by Owner ID, Application Name, Application Code
+            13 Owner ID
+             2 Application Name
+             1 Application Code
+
+   P2 DPWEB.002 Page Information
+
+      P2F1   Application Code                         A12;;T
+      P2F2   Application Name                         A60;;T::C
+      P2F3   Page Number                              GZZ,ZZ9;;B
+      P2F4   Page Code                                A12;;T
+      P2F5   Page Name                                A60;;T
+      P2F6   Page Can Initiate Session                U1
+      P2F7   Page Terminates Session                  U1
+      P2F8   Reports link
+      P2F9   Owner ID                                 A20;;T
+      P2F10  Report Count                             GZZZZ9::H
+      P2F11  Constant One                             G9::H
+
+      I1 by Application Code, Page Code
+             1 Application Code
+             4 Page Code
+      I2 by Application Code, Page Number
+             1 Application Code
+             3 Page Number
+      I3 by Application Code, Page Name, Page Code
+             1 Application Code
+             5 Page Name
+             4 Page Code
+
+   P3 DPWEB.003 Page Report Information
+
+      P3F1   Application Code                         A12;;T
+      P3F2   Application Name                         A60;;T::C
+      P3F3   Page Code                                A12;;T
+      P3F4   Page Name                                A60;;T::C
+      P3F5   Report Ordinal                           GZZ9;;B
+      P3F6   Report Number                            GZZ9;;B
+      P3F7   Report Name                              A78;;T::C
+      P3F8   Constant One                             G9::H
+      P3F9   Owner ID                                 A20;;T::C
+
+      I1 by Application Code, Page Code, Report Ordinal
+             1 Application Code
+             3 Page Code
+             5 Report Ordinal
+
+   P4 DPWEB.004 Report Information
+
+      P4F1   Application Code                         A12;;T
+      P4F2   Application Name                         A60;;T::C
+      P4F3   Report Number                            GZZ9;;B
+      P4F4   Report Name                              A78;;T
+      P4F5   Report Requires User ID                  U1
+      P4F6   Owner ID                                 A20;;T::C
+
+      I1 by Application Code, Report Number
+             1 Application Code
+             3 Report Number
+
+   P5 DPWEB.005 Session Information
+
+      P5F1   Application Code                         A12;;T
+      P5F2   Application Name                         A60;;T::C
+      P5F3   Session Number                           GZZZZ9
+      P5F4   Session ID                               GZZZZZZZZZZZZZ9
+      P5F5   User ID                                  A40
+      P5F6   Password                                 A40
+      P5F7   Session Began Date                       DYMD9999/99/99
+      P5F8   Session Began Time                       T99:99:99
+      P5F9   Session Ended Date                       DYMD9999/99/99
+      P5F10  Session Ended Time                       T99:99:99
+      P5F11  Last Activity                            GZZZZZZZZZZZZZ9
+
+      I1 by Application Code, Session ID
+             1 Application Code
+             4 Session ID
+      I2 by Application Code, Session Number
+             1 Application Code
+             3 Session Number
+      I3 by Application Code, User ID, Session Number
+             1 Application Code
+             5 User ID
+             3 Session Number
+      I4 by Application Code, Session Began Date, Session Began Time,
+             1 Application Code
+             7 Session Began Date
+             8 Session Began Time
+             3 Session Number
+
+   P6 DPWEB.006 Reserved
+
+
+
+   P7 DPWEB.007 User Information (USERID panel)
+
+      P7F1   User ID                                  A20
+      P7F2   Password                                 A20
+      P7F3   Menu Item                                GZ9
+      P7F4   Session ID                               GZZZZZZZZZZZZZ9
+
+      I1 by User ID
+             1 User ID
+      I2 by Session ID, User ID
+             4 Session ID
+             1 User ID
+
+   P8 DPWEB.008 Browser Communication Panel
+
+      P8F1   Session ID                               GZZZZZZZZZZZZZ9
+      P8F2   Parameter Name                           A20
+      P8F3   Parameter Ordinal                        GZZ9
+      P8F4   Parameter Value                          A60A10
+
+      I1 by Session ID, Parameter Name, Parameter Ordinal
+             1 Session ID
+             2 Parameter Name
+             3 Parameter Ordinal

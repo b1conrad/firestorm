@@ -1,0 +1,26 @@
+<script type="text/javascript" src="dp.js"></script>
+
+<script language="JavaScript">
+var savedP5 = new Object();
+
+function editP5(P5) {
+  savedP5.P5F5 = P5.P5F5.value;
+  savedP5.P5F35 = P5.P5F35.value;
+  return goEdit(P5,savedP5);
+}
+function saveP5(P5) {
+  if ( !confirm('Are you sure?') ) return false;
+  goBrowse(P5,savedP5);
+  return true;
+}
+</script>
+
+<form name="P5" onSubmit="alert('submission attempt');return false">
+<input name="P5F5" value="whatever" size="50" maxlength="50" readOnly="" />
+<br />
+<input name="P5F35" value="P" size="1" maxlength="1" readOnly="" />
+<br />
+<input type="submit" name="Edit" value="Edit" onClick="return editP5(form)" />
+<input type="submit" name="Save" value="Save" onClick="return saveP5(form)" disabled="" />
+<input type="submit" name="Cancel" value="Cancel" onClick="return goCancel(form,savedP5)" disabled="" />
+</form>

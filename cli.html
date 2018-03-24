@@ -1,0 +1,227 @@
+<html>
+<head>
+<title>Firestorm Command Line Interface</title>
+</head>
+
+<body>
+<table>
+<tr>
+<td valign=top width=15%> </td>
+<td>
+<table bgcolor="#FFFFFF" cellpadding=0 cellspacing=0 width=100%>
+<tr>
+<td align=left>
+<strong><font size=+5>sanbachs.NET</font></strong><br>
+<strong><font size=+1>Serving the DataPerfect* Community</font></strong>
+</td>
+<td align=right><a href=http://www.dataperfect.nl/><img src=../logo.gif width=318 height=61 border=0></a></td>
+</tr>
+</table>
+<HR>
+<table width=100%>
+<tr>
+<td>
+<a href=../index.html>Home</a> >
+<a href=index.html>Firestorm</a> >
+<a href=firestorm.html>Principles of
+Operation</a> >
+Command Line Interface
+</td>
+<tr>
+<td align=right>Last updated: December 5, 2000</td>
+</tr>
+</table>
+
+<h1>Firestorm – Command Line Interface</h1>
+
+
+<p>
+The Firestorm Command Line Interface is created by linking it with the
+engine and panel byte array (PBA) of a specific database.
+This is shown and introduced with the first diagram of the
+<a href=firestorm.html#figure1>Firestorm – Principles of Operation</a>.
+By convention, the executable file so created is named "fs-&lt;str name&gt;" 
+(on UNIX-like systems) or "FS-&lt;STR NAME&gt;.EXE" (on Windows systems).
+</p>
+
+<p>
+Once this program has been created, it can be used on the command line
+with arguments to direct it in performing many database operations.
+Batch files (on Windows systems) or shell scripts (on UNIX-like systems)
+can be written to perform complex series of operations.
+Some examples will be given later in this document.
+
+<p>
+The arguments it recognizes are introduced in this list:
+</p>
+
+<table width=100% border=0>
+<tr>
+<td width=50><img src=../1x1.gif width=50 height=1></td>
+<td align=left><dl compact>
+<dt>-i<dd>Used by itself, this puts the command line interface into
+"interactive mode" where the various database operations can be entered
+one per line, with their effect shown immediately.
+<dt>p<dd>Used to select a panel. Is immediately followed by the panel
+number. For example, p5 selects panel number 5.
+This panel remains in effect until another is selected.
+<dt>i<dd>Once a panel has been selected, this is used to select an
+index. It is immediately followed by the index number.
+Once selected, this index remains in effect until another is selected.
+<dt>s<dd>Once a panel and index have been selected, this is used to identify
+a "subset" by giving a list of fields that corresponds to the first one
+or more fields of the selected index. When this has been done, only
+records that match that subset will be considered by record operations.
+It is immediately followed by the number of fields in the field list.
+On the command line, these fields are given in subsequent arguments.
+In interactive mode, you will be prompted for them.
+Once a subset has been identified, it remains in effect until another subset
+is identified, or until s0 is used to turn subsetting off.
+<dt>#<dd>Used to give the number of records in the current panel,
+possibly limited by a subset and/or the exception list of the current index.
+<dt>1<dd>Used to position to the first record of a panel or subset.
+This becomes the "current record".
+<dt>$<dd>Used to position to the last record of a panel or subset.
+This becomes the "current record".
+<dt>f<dd>Used to find a particular record. Is followed by a field list,
+with one field value for each field in the current index.
+<dt>.<dd>Used to print the current record.
+The record will be printed on a single line, with all the real fields
+in order by field number and separated by tab characters.
+<dt>+<dd>Used to position to the next record in the panel or subset.
+If immediately followed by a number, prints out that many records,
+starting with the record after the current record.
+<dt>-<dd>Used to position to the previous record in the panel or subset.
+If immediately followed by a number, prints out that many records,
+starting with the record before the current record 
+and working backwards through the index.
+<dt>A<dd>Used to print all the records in the current panel or subset.
+Use this one with caution in panels with many records.
+<dt>:<dd>Used to specify which fields should be printed whenever records
+are printed. Is immediately followed by a list of field numbers,
+separated by colons. For example, :16:1:3 will cause only fields 16, 1,
+and 3 to be printed. Only real fields can be specified.
+<dt>d<dd>Used to delete the current record. Use with caution.
+<dt>a<dd>Used to add a record. Is followed by a list of fields, one for
+each of the real fields in the current panel, in field number order.
+Fields that contain embedded spaces and/or quotes must be quoted and use
+operating system specific escapes. 
+In interactive mode, you will be prompted for each field in turn.
+<dt>e<dd>Used to edit the current record. Is followed by a list of
+fields, one for each of the real fields in the current panel, in field
+number order. In interactive mode, you will be
+prompted for these field values one by one.
+<dt>u<dd>Used to update one or more fields of the current record.
+Is immediately followed by one or more field numbers, each one of which
+is immediately followed by either a colon, a plus sign, or a minus sign.
+Is followed by a list of field values, one per field number and in the
+order the field numbers were given. In interactive mode, you will be
+prompted for these field values one by one.
+For example, u16:1+3- "New string" 5 31 will replace field 16 with
+"New string", add 5 to field 1, and subtract 31 from field 3.
+<dt>q<dd>Used to quit. In non-interactive mode, this must be present as
+the last argument on the command line.
+</dl></td>
+</tr>
+</table>
+
+<p>
+Some examples follow. 
+STATS.STR and associated data files make up a very simple, one panel,
+one index database which happens to contain four records.
+It has been in use since September 17, 1996 counting the number of pages
+displayed by four 
+<a href=perl.html>Perl scripts</a>
+operating on the CDI.STR database which
+belongs to <a href=http://www.montana.com/yates/index.html>Yates
+Publishing</a> and which holds the data displayed in the
+<a href=../cdi.html>Computerized Ancestor</a>
+web application.
+</p>
+
+<pre>
+prompt > fs-stats p1 A q
+CDIB01  1169823
+CDIB02  209805
+CDIL01  6084001
+CDIL02  91067
+prompt > fs-stats p1 i2 A q
+There is no index #2 in panel #1
+prompt > fs-stats p1 :1 A q
+CDIB01
+CDIB02
+CDIL01
+CDIL02
+prompt > fs-stats p1 s1 CDIB A q
+CDIB01  1169823
+CDIB02  209805
+prompt > fs-stats p2 q
+There is no panel #2
+</pre>
+
+<p>
+The command used in the Perl script nfCDIL02.pl uses this command to
+increment its counter and get the result:
+</p>
+
+<pre>
+fs-stats p1 i1 f CDIL02 u2+ 1 :2 . q
+</pre>
+
+<p>
+The commands used in the same Perl script to obtain the number of records,
+and to obtain the fields to display in the first lookup list are:
+</p>
+
+<pre>
+fs-cdi p2 # q
+fs-cdi p2 :10:9:11 i4 1 - +20 q
+</pre>
+
+<p>
+The command used to obtain the next twenty records for the lookup list is:
+</p>
+
+<pre>
+fs-cdi p2 :10:9:11 i4 f 1993/11/25 MLC CRAGG - - - +20 q
+</pre>
+
+
+<HR>
+<H2>Contacting sanbachs.NET</h2>
+<P>Sign or browse our
+<A HREF="http://cgi.aros.net/cgi-bin/cgiwrap/~sanbachs/ngb1.cgi?WsoID=1&WsID=5">guest book</A>.
+</P>
+<address>
+<a href="mailto:webmaster@sanbachs.com">webmaster@sanbachs.com</a><br>
+<a href="mailto:l.jbastian@worldnet.att.net">A. Lewis Bastian, Jr.</a><br>
+<a href="../bruce/resume.html">Bruce Conrad</a><br>
+<a href="mailto:thom@xmission.com">Thom Boyer</a>
+</address>
+<HR>
+<H3>Disclaimer</H3>
+*<FONT COLOR="#0000FF">DataPerfect&reg;</FONT>
+is a copyright of Novell, Inc.
+sanbachs.NET is not affiliated with Novell, Inc.<BR>
+<HR>
+<img src="http://www.sanbachs.net/cgi-bin/countg.cgi?Name=fscli">
+visitors since November 12, 2000.
+</td>
+</tr>
+</table>
+<h5 align=center>Copyright &#169; 2001 sanbachs.NET</h5>
+<!-- Start Quantcast tag -->
+<script type="text/javascript">
+_qoptions={
+labels:"firestorm",
+qacct:"p-74TfK8Z7JORIY"
+};
+</script>
+<script type="text/javascript" src="http://edge.quantserve.com/quant.js"></script>
+<noscript>
+<img src="http://pixel.quantserve.com/pixel/p-74TfK8Z7JORIY.gif" style="display: none;" border="0" height="1" width="1" alt="Quantcast"/>
+</noscript>
+<!-- End Quantcast tag -->
+</body>
+</html>
+

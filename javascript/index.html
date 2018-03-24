@@ -1,0 +1,178 @@
+<html>
+<head>
+<title>Firestorm – JavaScript Support</title>
+</head>
+
+<body>
+<table>
+<tr>
+<td valign=top width=15%> </td>
+<td>
+<table bgcolor="#FFFFFF" cellpadding=0 cellspacing=0 width=100%>
+<tr>
+<td align=left>
+<strong><font size=+5>Sanbachs.com</font></strong><br>
+<strong><font size=+1>Serving the DataPerfect* Community</font></strong>
+</td>
+<td align=right><a href=http://www.dataperfect.nl/><img src=../../logo.gif width=318 height=61 border=0></a></td>
+</tr>
+</table>
+<HR>
+<table width=100%>
+<tr>
+<td>
+<a href=http://www.sanbachs.com/>Home</a> >
+<a href=http://www.sanbachs.com/firestorm/>Firestorm</a> >
+<a href=http://www.sanbachs.com/firestorm/projects.html>Project List</a> >
+JavaScript Support
+</td>
+</tr>
+<tr>
+<td align=right>Last updated: June 21, 2001</td>
+</tr>
+</table>
+
+<h1>Firestorm – JavaScript Support</h1>
+
+<p>
+We will use a very simple, one panel database. The fields will be:
+</p>
+
+<dl>
+<dt>P1F2
+<dd>A user identifier, which will be a small number (GZZZZ9).
+<dt>P1F2
+<dd>A value identifier, which will be a short alphanumeric string (A30).
+<dt>P1F3
+<dd>A value, which will be a text field (A30A0).
+</dl>
+
+<p>
+The panel will be indexed with fields one and two, in that order.
+The idea is that a numeric identifier will be assigned to each "user" of
+this database.
+Each user can store as many name to value associations as they wish.
+Field two becomes a kind of key, used to retrieve an arbitrary value
+stored in field three.
+</p>
+
+<p>
+The database itself can only be accessed on the web server, and JavaScript
+cannot do this directly.
+We have defined a 
+<a href=www-db.txt>simple CGI script</a>
+to access the database and communicate with JavaScript.
+</p>
+
+<p>
+Each time the script is run, it is passed the following CGI variables
+from a form that it presents.
+</p>
+
+<dl>
+<dt>ID
+<dd>The numeric identifier of the user.
+<dt>Key
+<dd>The name of the value to be stored or retrieved.
+<dt>Val
+<dd>The value to be stored. This will be missing if a value is to be retrieved.
+<dt>Action
+<dd>The character 'G' if a value is to be retrieved,
+or 'P' if the value is to be stored.
+</dl>
+
+<p>
+To get things started, a user can run this script passing in only
+the ID number.
+The script will respond by not doing any database access, but
+merely presenting the form.
+Then database records can be created by typing a name into the first field,
+a value into the second field,
+the letter 'P' into the third field,
+and clicking on the button.
+A database value can be retrieved by typing its name into the first field,
+the letter 'G' into the third field,
+and clicking on the button.
+</p>
+
+<p>
+So far, we have only a very simple (and ugly) form to use the database.
+But, this CGI script was not intended for human use.
+To integrate this with JavaScript, we need to use HTML frames.
+A JavaScript function in one frame will place values into the form fields
+(in a second frame),
+then cause the form to be submitted.
+Sometime later, after the CGI script has run on the server,
+the results will be available in the second frame.
+Now, a simple change to the JavaScript code produced by the CGI script
+allows communication with JavaScript code in the first frame.
+</p>
+
+<p>
+There is a timing problem with web applications and JavaScript.
+If we have a JavaScript function that sets up the values in the form fields,
+then causes the form to submit, the results will not be available until
+after the CGI script has completed on the server and the browser has
+displayed the resulting HTML page.
+We use the "onLoad" attribute of the &lt;BODY&gt; tag to get around this.
+The <a href=www-fs.txt>adapted CGI script</a> is just like the earlier
+one, except that in the "onLoad" attributes, instead of doing a JavaScript
+alert, it calls a function in the other frame.
+This solves the timing problem.
+</p>
+
+<p>
+Frames have names. This code assumes that the first frame is named "db" and
+the second "fs".
+The callback functions are named "put-result", "get-result", and "err-result".
+The first of these expects one argument, a number error code for the
+result of the put operation (or zero if it succeeded).
+The second expects the value (field three) of the retrieved database record.
+The last expects a numeric error code for the get operation if it fails
+for some reason.
+</p>
+
+<p>
+Now we are in a position to study the JavaScript code that is loaded into
+the "db" frame.
+This file is named <a href=db.html>db.html</a> and you can study its
+<a href=db.txt>source code</a> by clicking on View Page Source in your browser.
+</p>
+
+<HR>
+<H2>Contacting Sanbachs</h2>
+<P>Sign or browse our
+<A HREF="http://cgi.aros.net/cgi-bin/cgiwrap/~sanbachs/ngb1.cgi?WsoID=1&WsID=5">guest book</A>.
+</P>
+<address>
+<a href="mailto:webmaster@sanbachs.com">webmaster@sanbachs.com</a><br>
+<a href="mailto:l.jbastian@worldnet.att.net">A. Lewis Bastian, Jr.</a><br>
+<a href="http://www.sanbachs.com/bruce">Bruce Conrad</a><br>
+<a href="mailto:thom@xmission.com">Thom Boyer</a>
+</address>
+<HR>
+<H3>Disclaimer</H3>
+*<FONT COLOR="#0000FF">DataPerfect&reg;</FONT>
+is a copyright of Novell, Inc.
+Sanbachs.com is not affiliated with Novell, Inc.<BR>
+<HR>
+<img src="http://www.sanbachs.net/cgi-bin/countg.cgi?Name=fsjavascript">
+visitors since June 21, 2001.
+</td>
+</tr>
+</table>
+<h5 align=center>Copyright &#169; 2000 Sanbachs.com</h5>
+<!-- Start Quantcast tag -->
+<script type="text/javascript">
+_qoptions={
+labels:"firestorm",
+qacct:"p-74TfK8Z7JORIY"
+};
+</script>
+<script type="text/javascript" src="http://edge.quantserve.com/quant.js"></script>
+<noscript>
+<img src="http://pixel.quantserve.com/pixel/p-74TfK8Z7JORIY.gif" style="display: none;" border="0" height="1" width="1" alt="Quantcast"/>
+</noscript>
+<!-- End Quantcast tag -->
+</body>
+</html>

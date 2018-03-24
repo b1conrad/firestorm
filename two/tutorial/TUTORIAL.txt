@@ -1,0 +1,54 @@
+This is a suggested "experience" with the files in this directory.
+
+Look at DPWEB.TXT for an idea of the database structure.
+
+Import the database definition.
+  Run DPIMP
+  Select DPWEB.STE
+
+Import the database data.
+  Run DP DPWEB
+  1 (Re-create the Text File)
+  1 (Create a New Index File)
+  Enter (Panel 1)
+  Shift-F9
+  8 (Import Transaction Log)
+  Enter "DPWEB.LOG" (without the quotes)
+  Press any key to continue
+
+Explore the database with data.
+
+Notice that there are no reports defined.
+
+Import the reports. For example,
+  Run DPIMP
+  Select REPORT2.STE
+  Select DPWEB.STR
+
+Repeat, in order, for the remaining reports.
+
+Look at the DPWEB*.LOG files. Notice how they match the Page Information
+for the application whose code is "dpweb".
+  DPWEB001.LOG runs reports 2, 4, and 3
+  DPWEB002.LOG sets appcode=dpweb and runs report 5
+  DPWEB003.LOG sets appcode=dpweb, pgcode=list-all and runs report 6
+
+Simulate a request for http://localhost/dpweb/dpweb.str/list-all
+  Run DP DPWEB /W /EI=DPWEB001.LOG
+  (this will generate a webpage, DPWEB001.HTM)
+
+Simulate a request for http://localhost/dpweb/dpweb.str/list-app?appcode=dpweb
+  Run DP DPWEB /W /EI=DPWEB002.LOG
+  (this will generate a webpage, DPWEB002.HTM)
+
+Simulate a request for http://localhost/dpweb/dpweb.str/list-page?appcode=dpweb&pgcode=list-all
+  Run DP DPWEB /W /EI=DPWEB003.LOG
+  (this will generate a webpage, DPWEB003.HTM)
+
+Use a browser to examine the first web page created
+  Run DPWEB001.HTM
+
+Click on the link to "Firestorm Two Application Registration and Control"
+
+Click on the link to "List All Applications"
+

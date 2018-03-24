@@ -1,0 +1,69 @@
+<HTML>
+<HEAD>
+<TITLE>db</TITLE>
+<SCRIPT LANGUAGE=JavaScript>
+  function do_get()
+  {
+    var db = parent.fs.document.db;
+    if (db)
+    {
+      db.Key.value = get_key;
+      db.Action.value = 'G';
+      db.submit();
+    }
+    else
+    {
+      setTimeout('do_get()',500);
+    }
+  }
+  function do_put()
+  {
+    var db = parent.fs.document.db;
+    if (db)
+    {
+      db.Key.value = put_key;
+      db.Val.value = put_val;
+      db.Action.value = 'P';
+      db.submit();
+    }
+    else
+    {
+      setTimeout('do_put()',500);
+    }
+  }
+  function get(key,func,errFunc)
+  {
+    get_key = key;
+    get_function = func;
+    err_function = errFunc;
+    do_get();
+  }
+  function put(key,val,func)
+  {
+    put_key = key;
+    put_val = val;
+    put_function = func;
+    do_put();
+  }
+  function get_result(val)
+  {
+    if (get_function != undefined)
+      parent.app.eval(get_function+'("'+val+'")');
+  }
+  function err_result(err)
+  {
+    if (err_function != undefined)
+      parent.app.eval(err_function+'("'+err+'")');
+  }
+  function put_result(err)
+  {
+    if (put_function != undefined)
+      parent.app.eval(put_function+'("'+err+'")');
+  }
+</SCRIPT>
+</HEAD>
+<BODY>
+Database functions
+</BODY>
+</HTML>
+

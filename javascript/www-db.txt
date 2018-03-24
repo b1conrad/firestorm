@@ -1,0 +1,90 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+#include "../fs.h"
+
+char *WhatFilename = "what-www.txt";
+
+Field_Value *ID;
+Field_Value *Action;
+Field_Value *Key;
+Field_Value *Val;
+Field_Value *IP;
+
+FS_CGI_arg FSexpect[] = {
+  { "ID", &ID, "0"},
+  { "Action", &Action, NULL},
+  { "Key", &Key, ""},
+  { "Val", &Val, ""},
+  { "REMOTE_ADDR", &IP, "01234456789"},
+  NULL
+};
+
+void emitHTMLprotected(char *s)
+{
+  for (; *s; s++)
+    switch (*s) {
+      case '&': printf("&amp;"); break;
+      case '<': printf("&lt;"); break;
+      case '>': printf("&gt;"); break;
+      case '"': printf("&quot;"); break;
+      default: printf("%c", *s);
+    }
+}
+
+int FSquery()
+{
+  FS_panel p1;
+  int err;
+  int validAction;
+
+  p1 = FSsetPanel(1);
+  printf("Content-type: text/html\n\n");
+  printf("<HTML>\n");
+  printf("<HEAD>\n");
+  printf("<TITLE>fs</TITLE>\n");
+  printf("</HEAD>\n");
+  printf("<BODY");
+  if (Action == NULL) {
+    validAction = 0;
+  } else {
+    switch (*(Action->field_data)) {
+      case 'P':
+	err = FScreateRec(p1,FSfList(p1,ID,Key,Val));
+	if (err > 1280) {
+	  err = FSupdateField(p1,FSifList(p1,1,ID,Key),3,':',Val);
+	}
+	printf(" onLoad=\"alert('err=%d')\"",err);
+	err = FSequalRec(p1,FSifList(p1,1,ID,Key));
+	validAction = (err == FS_OK);
+	break;
+      case 'G':
+	err = FSequalRec(p1,FSifList(p1,1,ID,Key));
+	if (err == FS_OK)
+	  printf(" onLoad=\"alert('value='+document.db.Val.value)\"");
+	else
+	  printf(" onLoad=\"alert('err=%d')\"", err);
+	validAction = (err == FS_OK);
+	break;
+      default:
+	validAction = 0;
+    }
+  }
+  printf(">\n");
+  printf("<FORM NAME=db METHOD=POST ACTION=%s/www-db.cgi>\n",
+    "http://www.sanbachs.net/cgi-bin");
+  printf("<INPUT TYPE=HIDDEN NAME=ID VALUE=%s>\n", ID->field_data);
+  printf("<INPUT NAME=Key VALUE=\"");
+  if (validAction) emitHTMLprotected(FSfield(p1,2)->field_data);
+  printf("\" SIZE=30 MAXLENGTH=30>\n");
+  printf("<TEXTAREA NAME=Val ROWS=4 COLS=40>");
+  if (validAction) emitHTMLprotected(FSfield(p1,3)->field_data);
+  printf("</TEXTAREA>\n");
+  printf("<INPUT NAME=Action VALUE=\"\" SIZE=1 MAXLENGTH=1>\n");
+  printf("<INPUT TYPE=SUBMIT VALUE=X>\n");
+  printf("</FORM>\n");
+  printf("</BODY>\n");
+  printf("</HTML>\n");
+  return FS_OK;
+}

@@ -1,0 +1,236 @@
+
+METAD.STR (METAD)                                               10/31/00 11:11
+
+   P1 Database Description
+
+      P1F1   Database Number                          GZZ9
+      P1F2   Database Name                            A40;;T
+      P1F3   Database Filename                        U8
+      P1F4   Database Panels
+      P1F5   Database Panel Count                     GZZ9::N
+      P1F6   Database Sortmap
+
+      I1 by Database Number
+             1 Database Number
+
+   P2 Panel Description
+
+      P2F1   Database Number                          GZZ9::N
+      P2F2   Database Name                            A40;;T::C
+      P2F3   Database Filename                        U8::C
+      P2F4   Panel Number                             GZZ9
+      P2F5   Panel Name                               A60;;T
+      P2F6   Panel Filename                           U12
+      P2F7   Panel Fields
+      P2F8   Panel Field Count                        GZZ9::N
+      P2F9   Panel Constant One                       G9::H
+      P2F10  Panel Indexes
+      P2F11  Panel Index Count                        GZZ9::N
+      P2F12  Panel Panel Links
+      P2F13  Panel Record Size                        GZZZZ9
+      P2F14  Link to Panel Text and Layout
+
+      I1 by Database Number, Panel Number
+             1 Database Number
+             4 Panel Number
+
+   P3 Field Description
+
+      P3F1   Database Number                          GZZ9::N
+      P3F2   Database Name                            A40;;T::C
+      P3F3   Database Filename                        U8::C
+      P3F4   Panel Number                             GZZ9::N
+      P3F5   Panel Name                               A60;;T::C
+      P3F6   Panel Filename                           U12::C
+      P3F7   Field Number                             GZZ9
+      P3F8   Field Name                               A60;;T
+      P3F9   Field Format                             U40;;T
+      P3F10  Field Constant One                       G9::H
+      P3F11  Field Display Width                      GZ9::C
+      P3F12  Field Storage Size                       GZ9::C
+      P3F13  Field Display Height                     GZ9::C
+      P3F14  Field Display Mode C                     U1::C
+      P3F15  Field Display Mode H                     U1::C
+      P3F16  Field Display Mode N                     U1::C
+      P3F17  Field Print Mode T                       U1::C
+      P3F18  Field Link Panel Number                  GZZ9
+      P3F19  Field Link Target Field Number           GZZ9
+      P3F20  Field Link Index Number                  GZZ9
+      P3F21  Field Link Fields
+      P3F22  Field is Panel Link                      U1::C
+      P3F23  Field Link Type                          A4::C
+      P3F24  Field Link Symbol                        A1::CH
+      P3F25  Field Link Target Field Name             A20::C
+      P3F26  Field Storage Digit Count                HZ9::C
+      P3F27  Link to Field Layout
+      P3F28  Decimal Digits Count                     HZ9::C
+      P3F29  Decimal Point                            A1::C
+      P3F30  Field Storage Offset                     GZZZ9
+
+      I1 by Database Number, Panel Number, Field Number
+             1 Database Number
+             4 Panel Number
+             7 Field Number
+      I2 by Database Number, Panel Number, Field Number
+             1 Database Number
+             4 Panel Number
+             7 Field Number
+           Except  22 Field is Panel Link
+
+   P4 Index Description
+
+      P4F1   Database Number                          GZZ9::N
+      P4F2   Database Name                            A40;;T::C
+      P4F3   Database Filename                        U8::C
+      P4F4   Panel Number                             GZZ9::N
+      P4F5   Panel Name                               A60;;T::C
+      P4F6   Panel Filename                           U12::C
+      P4F7   Index Number                             GZZ9
+      P4F8   Index Name                               A60;;T
+      P4F9   Index Constant One                       G9::H
+      P4F10  Index Fields
+      P4F11  Index Field Count                        GZ9::N
+      P4F12  Index Exception Fields
+      P4F13  Index Exception Field Count              GZ9::N
+      P4F14  Index Base Block                         GZZZZZZZ9::N
+
+      I1 by Database Number, Panel Number, Index Number
+             1 Database Number
+             4 Panel Number
+             7 Index Number
+
+   P5   Field in Index
+
+      P5F1   Database Number                          GZZ9::N
+      P5F2   Database Name                            A40;;T::C
+      P5F3   Database Filename                        U8::C
+      P5F4   Panel Number                             GZZ9::N
+      P5F5   Panel Name                               A60;;T::C
+      P5F6   Panel Filename                           U12::C
+      P5F7   Field Number                             GZZ9
+      P5F8   Field Name                               A60;;T::C
+      P5F9   Field in Index Constant One              G9::H
+      P5F10  Index Number                             GZZ9::N
+      P5F11  Index Name                               A60;;T::C
+      P5F12  Field Position in Index                  GZ9
+      P5F13  Field In Index Lookup Width              GZ9::N
+      P5F14  Field in Index Maximum Width             GZ9::C
+
+      I1 by Database Number, Panel Number, Index Number, Field Positi
+             1 Database Number
+             4 Panel Number
+            10 Index Number
+            12 Field Position in Index
+      I2 by Database Number, Panel Number, Field Number, Index Number
+             1 Database Number
+             4 Panel Number
+             7 Field Number
+            10 Index Number
+
+   P6 (INDASE, CGI, HTML environment information)
+
+      P6F1   Environment ID                           A32
+      P6F2   INDASE directory path                    A50;;T
+      P6F3   CGI directory path                       A50;;T
+      P6F4   HTML directory path                      A50;;T
+      P6F5   Images directory path                    A50;;T
+      P6F6   Environment path                         A50;;T
+
+      I1 by Environment ID
+             1 Environment ID
+
+   P7   Exception Field in Index
+
+      P7F1   Database Number                          GZZ9
+      P7F2   Database Name                            A40;;T::C
+      P7F3   Database Filename                        U8::C
+      P7F4   Panel Number                             GZZ9
+      P7F5   Panel Name                               A60;;T::C
+      P7F6   Panel Filename                           U12::C
+      P7F7   Field Number                             GZZ9
+      P7F8   Field Name                               A60;;T::C
+      P7F9   Field Constant One                       G9::H
+      P7F10  Index Number                             GZZ9
+      P7F11  Index Name                               A60;;T::C
+      P7F12  Exception Field Position                 GZ9
+
+      I1 by Database Number, Panel Number, Index Number
+             1 Database Number
+             4 Panel Number
+            10 Index Number
+      I2 by Database Number, Panel Number, Field Number
+             1 Database Number
+             4 Panel Number
+             7 Field Number
+
+   P8   Field in Link Field List
+
+      P8F1   Database Number                          GZZ9
+      P8F2   Database Name                            A40;;T::C
+      P8F3   Database Filename                        U8::C
+      P8F4   Panel Number                             GZZ9
+      P8F5   Panel Name                               A60;;T::C
+      P8F6   Panel Filename                           U12::C
+      P8F7   Field Number                             GZZ9
+      P8F8   Field Name                               A60;;T::C
+      P8F9   Field in Link Field List Constant One    G9::H
+      P8F10  Link Field Number                        GZZ9
+      P8F11  Link Field Name                          A60;;T::C
+      P8F12  Link Field Position                      GZ9
+
+      I1 by Database Number, Panel Number, Link Field Number, Link Fi
+             1 Database Number
+             4 Panel Number
+            10 Link Field Number
+            12 Link Field Position
+
+   P9   Sortmap Character
+
+      P9F1   Database Number                          GZZ9
+      P9F2   Database Name                            A40;;T::C
+      P9F3   Database Filename                        U8::C
+      P9F4   Sortmap Character Code                   G999
+      P9F5   Sortmap Character                        A1::C
+      P9F6   Sortmap Character Maps To Code           G999
+      P9F7   Sortmap Character Maps To                A1::C
+
+      I1 by Database Number, Sortmap Character Code
+             1 Database Number
+             4 Sortmap Character Code
+
+   P10   Panel Text and Layout
+
+      P10F1  Database Number                          GZZ9
+      P10F2  Database Name                            A40;;T::C
+      P10F3  Database Filename                        U8::C
+      P10F4  Panel Number                             GZZ9
+      P10F5  Panel Name                               A60;;T::C
+      P10F6  Panel Left                               GZ9
+      P10F7  Panel Filename                           U12::C
+      P10F8  Fields
+      P10F9  Panel Top                                GZ9
+      P10F10 Panel Width                              GZ9
+      P10F11 Panel Height                             GZ9
+      P10F12 Panel Text                               A68A11
+
+      I1 by Database Number, Panel Number
+             1 Database Number
+             4 Panel Number
+
+   P11   Field Layout
+
+      P11F1  Database Number                          GZZ9
+      P11F2  Database Name                            A40;;T::C
+      P11F3  Database Filename                        U8::C
+      P11F4  Panel Number                             GZZ9
+      P11F5  Panel Name                               A60;;T::C
+      P11F6  Panel Filename                           U12::C
+      P11F7  Field Number                             GZZ9
+      P11F8  Field Name                               A60;;T::C
+      P11F9  Field X                                  GZ9;;B
+      P11F10 Field Y                                  GZ9;;B
+
+      I1 by Database Number, Panel Number, Field Number
+             1 Database Number
+             4 Panel Number
+             7 Field Number

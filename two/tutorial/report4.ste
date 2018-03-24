@@ -1,0 +1,34 @@
+REPORTS:
+REPORT.BASED.ON.PANEL:1 
+NAME:~DPweb Application List All Applications~
+REPORT.MODE:TEXT
+OUTPUT.FILENAME:~DPWEB001.HTM~
+APPEND.DISK.FILE
+REPORT.INDEX: 2 
+TEXT.LINES=0 TOP.MARGIN=0 BOTTOM.MARGIN=0 LEFT.MARGIN=0 
+REPORT.FORM:
+FIRST.PAGE.HEADER
+~<font face="Arial">~  CR
+~<table border="1">~  CR
+~<tr>~  CR
+~<th align="left">Application Name</th>~  CR
+~<th align="left">Appl. Code</th>~  CR
+~<th align="right">BCP*</th>~  CR
+~</tr>~ 
+OTHER.PAGE.HEADER
+TWO.LEVEL.REPORT.HEADER
+REPORT.BODY
+~<tr>~  CR
+~<td><a href="DPWEB002.HTM?appcode=~  FIELD=P1F1;~A12;;T~ ~">~ 
+ FIELD=P1F2;~A60;;T~ ~</a></td>~  CR
+~<td>~  FIELD=P1F1;~A12~ ~</td>~  CR
+~<td align="right">~  FIELD=P1F3;~GZZ9~ ~</td>~  CR
+~</tr>~ 
+TWO.LEVEL.FOOTER
+PAGE.FOOTER
+FINAL.FOOTER
+~</table>~  CR
+~* BCP means "Browser Control Panel"~  CR
+~</font>~ 
+REPORT.END;
+

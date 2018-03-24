@@ -1,0 +1,11 @@
+database.str=mydata.str
+database.ind=mydata.ind
+database.txx=mydata.txx
+
+session.user=P41F1
+session.password=P41F2
+session.id=P41F7
+
+parameter.id=P73F1
+parameter.name=P73F2
+parameter.value=P73F3

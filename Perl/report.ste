@@ -1,0 +1,1051 @@
+
+REPORTS:
+REPORT.BASED.ON.PANEL:1 
+NAME:~Generate all HTML and Perl scripts for database v3.0 (Use Alt-F7)~
+REPORT.MODE:TEXT
+OUTPUT.FILENAME:~PLANT\PLANT.HTM~
+REPORT.INDEX: 1 
+TEXT.LINES=0 TOP.MARGIN=0 BOTTOM.MARGIN=0 LEFT.MARGIN=0 
+REPORT.FORM:
+FIRST.PAGE.HEADER
+PROMPT.FOR.VALUE.OF.RV:250 USING.FORMAT:~A32~
+  PROMPT.MSG:~Enter Environment ID:~
+PROMPT.FOR.VALUE.OF.RV:245 USING.FORMAT:~GZZ9~
+  PROMPT.MSG:~Enter number of User ID panel:~
+OTHER.PAGE.HEADER
+TWO.LEVEL.REPORT.HEADER
+~rv1    -- Browse Script Name (A12;;T)~  CR
+~rv2    -- Lookup Script Name (A12;;T)~  CR
+~rv3    -- database filename limited to 5 characters~  CR
+~rv5    -- output filename~  CR
+~rv250  -- Environment ID (Key field for Environment Panel)~  CR
+~rv251  -- INDTXX base directory path~  CR
+~rv252  -- CGI base directory path~  CR
+~rv253  -- HTML base directory path~  CR
+~rv254  -- Images directory path~  CR
+~rv255  -- Environment path~  CR
+REPORT.BODY
+VIRTUAL.SUBREPORT.TO.PANEL:6 TO.INDEX:1 FIELD.LIST:-250 
+FIRST.PAGE.HEADER
+OTHER.PAGE.HEADER
+TWO.LEVEL.REPORT.HEADER
+REPORT.BODY
+SET.RV:251 FORMULA: FIELD=P6F2 
+FORMULA.END;
+SET.RV:252 FORMULA: FIELD=P6F3 
+FORMULA.END;
+SET.RV:253 FORMULA: FIELD=P6F4 
+FORMULA.END;
+SET.RV:254 FORMULA: FIELD=P6F5 
+FORMULA.END;
+SET.RV:255 FORMULA: FIELD=P6F6 
+FORMULA.END;
+TWO.LEVEL.FOOTER
+PAGE.FOOTER
+FINAL.FOOTER
+END.SUBREPORT.FOR.PANEL:6
+SET.RV:3 FORMULA:~length[~  FIELD=P1F3 ~] cases~  CR
+~  case cv<5 of~  CR
+~    ~  FIELD=P1F3 ~ endof~  CR
+~  default~  CR
+~    substring[~  FIELD=P1F3 ~;1;5]~  CR
+~endcases~ 
+FORMULA.END;
+SUBREPORT.THRU.DOOR:4 TO.PANEL:2
+FIRST.PAGE.HEADER
+OTHER.PAGE.HEADER
+TWO.LEVEL.REPORT.HEADER
+~rv4    -- current field ordinal (GZZ9;;B)~  CR
+~rv9    -- Boolean: current field is a "real" field~  CR
+~rv10   -- maximum field label size~  CR
+~rv11   -- all field names as PERL variable names~  CR
+~rv12   -- all old field names as PERL variable names~  CR
+~rv20   -- translate from field number to real field number~  CR
+~rv21   -- index key field numbers (A50;;T)~  CR
+~rv22   -- index key field names (A63A0)~  CR
+~rv30   -- misc per field information (varies)~  CR
+REPORT.BODY
+SET.RV:4 FORMULA:~1~ 
+FORMULA.END;
+SET.RV:10 FORMULA:~0~ 
+FORMULA.END;
+SET.RV:11 FORMULA:~''~ 
+FORMULA.END;
+SET.RV:12 FORMULA:~''~ 
+FORMULA.END;
+SET.RV:20 FORMULA:~''~ 
+FORMULA.END;
+SUBREPORT.THRU.DOOR:7 TO.PANEL:3
+FIRST.PAGE.HEADER
+OTHER.PAGE.HEADER
+TWO.LEVEL.REPORT.HEADER
+REPORT.BODY
+SET.RV:10 FORMULA:~max[rv10;length[~  FIELD=P3F8 ~]]~ 
+FORMULA.END;
+SET.RV:11 FORMULA:~if ~  FIELD=P3F12  CR
+~  then ('$V{P' apply.Format['GZZ9;;B';~  FIELD=P3F4 ~]~  CR
+~      'F' apply.format['GZZ9;;B';~  FIELD=P3F7 ~] '}') cases~  CR
+~    case rv11='' of~  CR
+~      cv endof~  CR
+~    default ~  CR
+~      rv11 ', ' cv~  CR
+~    endcases~  CR
+~  else rv11~  CR
+~endif~ 
+FORMULA.END;
+SET.RV:12 FORMULA:~if ~  FIELD=P3F12  CR
+~  then ('$V{Old_P' apply.Format['GZZ9;;B';~  FIELD=P3F4 ~]~  CR
+~        'F' apply.format['GZZ9;;B';~  FIELD=P3F7 ~] '}') cases~  CR
+~    case rv12='' of~  CR
+~      cv endof~  CR
+~    default ~  CR
+~      rv12 ', ' cv~  CR
+~    endcases~  CR
+~  else rv12~  CR
+~endif~ 
+FORMULA.END;
+SET.RV:9 FORMULA: FIELD=P3F12 
+FORMULA.END;
+SET.RV:20 FORMULA:~rv20 ' '~  CR
+~if rv9~  CR
+~  then apply.format['GZZ9;;B';rv4]~  CR
+~  else '0'~  CR
+~endif~ 
+FORMULA.END;
+SKIP.RECORD.ON.RV:9
+SET.RV:4 FORMULA:~rv4+1~ 
+FORMULA.END;
+TWO.LEVEL.FOOTER
+PAGE.FOOTER
+FINAL.FOOTER
+END.SUBREPORT.FOR.PANEL:3
+SET.RV:3 FORMULA:~length[~  FIELD=P2F3 ~] cases~  CR
+~  case cv<5 of~  CR
+~    ~  FIELD=P2F3 ~ endof~  CR
+~  default~  CR
+~    substring[~  FIELD=P2F3 ~;1;5]~  CR
+~endcases~ 
+FORMULA.END;
+SET.RV:1 FORMULA:~cat.t[rv3; 'B'; apply.format['G99';~  FIELD=P2F4 ~]; '.pl']~ 
+ CR
+
+FORMULA.END;
+SET.RV:2 FORMULA:~cat.t[rv3; 'L'; apply.format['G99';~  FIELD=P2F4 ~]; '.pl']~ 
+FORMULA.END;
+SET.RV:5 FORMULA:~cat.t[rv3; '\'; rv1]~ 
+FORMULA.END;
+TURN.FILE.OFF
+RV:20;~A50A0~ 
+BEGIN.WRITING.TO.FILENAME.IN.RV:5
+TURN.FILE.ON
+~#!/usr/bin/perl -T~  CR
+ CR
+~# ~ RV:1;~A12;;T~ ~: ~  FIELD=P2F2;~A40;;T::C~ ~, Browse Panel ~ 
+ FIELD=P2F4;~GZZ9;;B~  CR
+~require("lib.pl");~  CR
+ CR
+~$debug = 0;~  CR
+~$_dp_command = "~ RV:251;~A50;;T~ ~/fs-~ RV:3;~U5;;T~ ~";~  CR
+ CR
+~$ENV{'PATH'} = "~ RV:255;~A50;;T~ ~";~  CR
+~if ($debug) { ~  CR
+~  open(TRACE, ">>trace.out"); ~  CR
+~  $_oldfh = select(TRACE);~  CR
+~  $| = 1;~  CR
+~  select($_oldfh);~  CR
+~  print TRACE "=====running ~ RV:1;~A12;;T~ ~:\n";~  CR
+~  print TRACE "Current directory is: ", `pwd`;~  CR
+~}~  CR
+ CR
+~$buffer = &getCGIinput();~  CR
+~&defineVariables($buffer);~  CR
+~if ($debug) {~  CR
+~  print TRACE "Variables: '", join("' '", %V), "'\n";~  CR
+~}~  CR
+ CR
+~@_Output = &runCommand($_dp_command, "p~ RV:245;~GZZ9;;B~ ~", "i2", "z5:1800",~ 
+ CR
+~                       "$ENV{REMOTE_ADDR}", "$V{UserID}", "q");~  CR
+~if ($_Output[0] ne "OK0") {~  CR
+~  &apologies("Authentication failed: please login again.");~  CR
+~  exit;~  CR
+~}~  CR
+ CR
+~if (defined $V{_KeyArray}) {~  CR
+~  @_KeyArray = &DPdecode($V{_KeyArray});~  CR
+~}~  CR
+ CR
+~#Provide default command choice: "_Lookup=First Record"~  CR
+~if (! defined $V{_Lookup} && ! defined $V{_Action}) {~  CR
+~  if (defined $V{_Index} && defined @_KeyArray) {~  CR
+~    if ($debug) { print TRACE "defaulting to _Lookup=Find\n"; }~  CR
+~    $V{_Lookup} = "Find";~  CR
+~  } else {~  CR
+~    if ($debug) { print TRACE "defaulting to _Lookup=First\n"; }~  CR
+~    $V{_Lookup} = "First Record";~  CR
+~    if (! defined $V{_Index}) { $V{_Index} = ~  FIELD=P2F10P4F7;~GZZ9;;B~ ~; }~ 
+ CR
+~  }~  CR
+~}~  CR
+ CR
+~#Build key based on index number.~  CR
+~if (0) {~  CR
+SUBREPORT.THRU.DOOR:10 TO.PANEL:4
+FIRST.PAGE.HEADER
+OTHER.PAGE.HEADER
+TWO.LEVEL.REPORT.HEADER
+REPORT.BODY
+~} elsif ($V{_Index} == ~  FIELD=P4F7;~GZZ9;;B~ ~) {~  CR
+SET.RV:21 FORMULA:~''~ 
+FORMULA.END;
+SET.RV:22 FORMULA:~''~ 
+FORMULA.END;
+SUBREPORT.THRU.DOOR:10 TO.PANEL:5
+FIRST.PAGE.HEADER
+OTHER.PAGE.HEADER
+TWO.LEVEL.REPORT.HEADER
+REPORT.BODY
+SET.RV:21 FORMULA:~subfield[rv20;' ';~  FIELD=P5F7 ~] cases~  CR
+~  case rv21='' of cv endof~  CR
+~  default rv21 ', ' cv~  CR
+~endcases~ 
+FORMULA.END;
+SET.RV:22 FORMULA:~if rv22=''~  CR
+~  then cat.t['"'; ~  FIELD=P5F8 ~; '"']~  CR
+~  else cat.t[rv22; ','; 1 ; '"' ~  FIELD=P5F8 ~; '"']~  CR
+~endif~ 
+FORMULA.END;
+TWO.LEVEL.FOOTER
+PAGE.FOOTER
+FINAL.FOOTER
+END.SUBREPORT.FOR.PANEL:5
+~  @_KeyFields = (~ RV:21;~A50;;T~ ~);~  CR
+~  @_KeyFieldNames = (~ RV:22;~A63A0~  CR
+~                    );~  CR
+~  $_IndexName = "~  FIELD=P4F8;~A60;;T~ ~";~  CR
+~  $_Selected_Index~  FIELD=P4F7;~GZZ9;;B~ ~="SELECTED";~ 
+TWO.LEVEL.FOOTER
+PAGE.FOOTER
+FINAL.FOOTER
+END.SUBREPORT.FOR.PANEL:4
+ CR
+~} else {~  CR
+~  if ($debug) { print TRACE "Bad _Index value ($V{_Index})\n"; }~  CR
+~  die "Unknown index (#$V{_Index})";~  CR
+~}~  CR
+ CR
+~@_KeyArray = @_KeyArray[0..$#_KeyFields]; # if Key came from ~ 
+RV:2;~A12;;T~  CR
+ CR
+~$_form = "Browse";~  CR
+~if (defined $V{_Lookup}) {~  CR
+~  if ($debug) { print TRACE "doing _Lookup=$V{_Lookup}\n"; }~  CR
+~  if      ($V{_Lookup} eq "First Record") {~  CR
+~    @_dpargs = ("1", ".");~  CR
+~  } elsif ($V{_Lookup} eq "Previous Record") {~  CR
+~    @_dpargs = ("f", @_KeyArray, "-", ".");~  CR
+~  } elsif ($V{_Lookup} eq "Find") {~  CR
+~    @_dpargs = ("f", @_KeyArray, ".");~  CR
+~  } elsif ($V{_Lookup} eq "Next Record") {~  CR
+~    @_dpargs = ("f", @_KeyArray, "+", ".");~  CR
+~  } elsif ($V{_Lookup} eq "Last Record") {~  CR
+~    @_dpargs = ('$', ".");~  CR
+~  } else {~  CR
+~    die "Error: _Lookup=$V{_Lookup}?\n";~  CR
+~  }~  CR
+~} else {~  CR
+~  if ($debug) { print TRACE "doing _Action=$V{_Action}\n"; }~  CR
+~  if ($V{_Action} eq "Add Record") {~  CR
+~    @_dpargs = (~  CR
+~      "a", ~ RV:11;~A65A0~  CR
+~                   , ".");~  CR
+~  } elsif ($V{_Action} eq "Save Changes") {~  CR
+~    @_dpargs = (~  CR
+~      "r", ~ RV:12;~A65A0~  CR
+~         ,~  CR
+~      "e", ~ RV:11;~A65A0~  CR
+~         ,~  CR
+~      ".");~  CR
+~  } elsif ($V{_Action} eq "Delete this record") {~  CR
+~    @_dpargs = ("k", @_KeyArray, "d", "f", @_KeyArray, ".");~  CR
+~  } elsif ($V{_Action} eq "Create a new record") {~  CR
+~    $_form = "Edit";~  CR
+~    $_actionType = "creation";~  CR
+~    $_SaveLabel = "Add Record";~  CR
+~    @_dpargs = ("v");~  CR
+~  } elsif ($V{_Action} eq "Edit this record") {~  CR
+~    $_form = "Edit";~  CR
+~    $_actionType = "edits";~  CR
+~    $_SaveLabel = "Save Changes";~  CR
+~    @_dpargs = ("f", @_KeyArray, ".");~  CR
+~  } else {~  CR
+~    die "Error: _Action=$V{_Action}?\n";~  CR
+~  }~  CR
+~}~  CR
+ CR
+~@_dp_exec = ($_dp_command, "p~  FIELD=P2F4;~GZZ9;;B~ ~", "i$V{_Index}",~  CR
+~    @_SubsetArray, @_dpargs, "q");~  CR
+~@_Output = &runCommand(@_dp_exec);~  CR
+~&checkForRunError();~  CR
+ CR
+~foreach (@_Output) { # recover any newlines encoded in the data~  CR
+~  s/\\n/\n/g;~  CR
+~  s/\\t/\t/g;~  CR
+~  s/\\\\/\\/g;~  CR
+~}~  CR
+ CR
+~if ($debug) {~  CR
+~  $" = " ";~  CR
+~  $_trace_cmd="@_dp_exec <HR>";~  CR
+~$_trace_cmd = '';~  CR
+~  $" = "\n";~  CR
+~  print TRACE "dp output: '@_Output'\n";~  CR
+~}~  CR
+ CR
+~#Split at tabs to separate the values output by the dp command~  CR
+~$_Output = $_Output[0];~  CR
+~@_dp = split(/\t/, $_Output);~  CR
+~if ($debug) { ~  CR
+~  $" = "' '";~  CR
+~  print TRACE "fields from dp: '@_dp'\n"; ~  CR
+~}~  CR
+~if (defined @_SubsetArray) {~  CR
+~  foreach (@_SubsetArray) { # encode any newlines etc. lurking in the data~ 
+ CR
+~    s/\n/\\n/g;~  CR
+~    s/\t/\\t/g;~  CR
+~    s/\\/\\\\/g;~  CR
+~  }~  CR
+~  $_PackedSubset = join("\t", @_SubsetArray);~  CR
+~  &HTMLencode($_PackedSubset); ~  CR
+~}~  CR
+~# If subsetted, display indicator.~  CR
+~if (@_SubsetArray > 1) {~  CR
+~  $_SubsetString = "Subset of ";~  CR
+~  $_SubsetIndicator = "(Looking only at records where ";~  CR
+~  foreach $_i ($[+1 .. $#_SubsetArray) {~  CR
+~    $_SubsetIndicator .= "<b>" . $_KeyFieldNames[$_i-1] . "</b>"~  CR
+~                      .  " = <i>" . $_SubsetArray[$_i] . "</i>";~  CR
+~    if ($_i != $#_SubsetArray) {~  CR
+~      $_SubsetIndicator .= " AND ";~  CR
+~    }~  CR
+~  }~  CR
+~  $_SubsetIndicator .= ")<BR>";~  CR
+~}~  CR
+ CR
+~$[ = 1;  #use 1-based indexing for HTML variables~  CR
+ CR
+~if ($V{_Action} ne "Create a new record") {~  CR
+~  @_KeyArray = @_dp[@_KeyFields];~  CR
+~}~  CR
+~$_PackedKey = join("\t", @_KeyArray);~  CR
+~&HTMLencode($_PackedKey);~  CR
+~if ($debug) { print TRACE "_PackedKey=$_PackedKey\n"; }~  CR
+ CR
+~&HTMLencode($_IndexName);~  CR
+~foreach (@_dp) {~  CR
+~  &HTMLencode($_);~  CR
+~}~  CR
+ CR
+~if ($V{_Action} eq "Save Changes" && $_run_exit != 0) {~  CR
+~  $_form = "Edit";~  CR
+~  $_actionType = "edits";~  CR
+~  $_SaveLabel = "Save Changes";~  CR
+SET.RV:4 FORMULA:~0~ 
+FORMULA.END;
+SUBREPORT.THRU.DOOR:7 TO.PANEL:3
+FIRST.PAGE.HEADER
+OTHER.PAGE.HEADER
+TWO.LEVEL.REPORT.HEADER
+REPORT.BODY
+SET.RV:9 FORMULA: FIELD=P3F12 
+FORMULA.END;
+SKIP.RECORD.ON.RV:9
+SET.RV:4 FORMULA:~rv4+1~ 
+FORMULA.END;
+~  if ($V{Old_P~  FIELD=P3F4;~GZZ9;;B~ ~F~  FIELD=P3F7;~GZZ9;;B~ ~} eq $_dp[~ 
+RV:4;~GZZ9;;B~ ~]) {~  CR
+~      $_dp[~ RV:4;~GZZ9;;B~ ~] = $V{P~  FIELD=P3F4;~GZZ9;;B~ ~F~ 
+ FIELD=P3F7;~GZZ9;;B~ ~};~  CR
+~  } else {~  CR
+~      $V{Old_P~  FIELD=P3F4;~GZZ9;;B~ ~F~  FIELD=P3F7;~GZZ9;;B~ ~} = $_dp[~ 
+RV:4;~GZZ9;;B~ ~];~  CR
+~  }~ 
+TWO.LEVEL.FOOTER
+PAGE.FOOTER
+FINAL.FOOTER
+END.SUBREPORT.FOR.PANEL:3
+~} elsif ($_form eq "Edit") {~  CR
+SET.RV:4 FORMULA:~0~ 
+FORMULA.END;
+SUBREPORT.THRU.DOOR:7 TO.PANEL:3
+FIRST.PAGE.HEADER
+OTHER.PAGE.HEADER
+TWO.LEVEL.REPORT.HEADER
+REPORT.BODY
+SET.RV:9 FORMULA: FIELD=P3F12 
+FORMULA.END;
+SKIP.RECORD.ON.RV:9
+SET.RV:4 FORMULA:~rv4+1~ 
+FORMULA.END;
+~  $V{Old_P~  FIELD=P3F4;~GZZ9;;B~ ~F~  FIELD=P3F7;~GZZ9;;B~ ~} = $_dp[~ 
+RV:4;~GZZ9;;B~ ~];~ 
+TWO.LEVEL.FOOTER
+PAGE.FOOTER
+FINAL.FOOTER
+END.SUBREPORT.FOR.PANEL:3
+~}~  CR
+ CR
+~if ($_form eq "Browse") {~  CR
+SUBREPORT.THRU.DOOR:7 TO.PANEL:3
+FIRST.PAGE.HEADER
+SET.RV:4 FORMULA:~0~ 
+FORMULA.END;
+OTHER.PAGE.HEADER
+TWO.LEVEL.REPORT.HEADER
+REPORT.BODY
+SET.RV:9 FORMULA: FIELD=P3F12 
+FORMULA.END;
+SKIP.RECORD.ON.RV:9
+SET.RV:4 FORMULA:~rv4+1~ 
+FORMULA.END;
+SET.RV:30 FORMULA:~if ~  FIELD=P3F13  CR
+~  then '  $_dp[' apply.format['GZZ9;;B';rv4]~  CR
+~    '] =~~ s/&#10;/<br>/g;'~  CR
+~  else ''~  CR
+~endif~  CR
+
+FORMULA.END;
+NO.BLANK.LINE RV:30;~A78;;T~  CR
+TWO.LEVEL.FOOTER
+PAGE.FOOTER
+FINAL.FOOTER
+END.SUBREPORT.FOR.PANEL:3
+SUBREPORT.THRU.DOOR:7 TO.PANEL:3
+FIRST.PAGE.HEADER
+SET.RV:4 FORMULA:~0~ 
+FORMULA.END;
+OTHER.PAGE.HEADER
+TWO.LEVEL.REPORT.HEADER
+REPORT.BODY
+SET.RV:9 FORMULA: FIELD=P3F12 
+FORMULA.END;
+SKIP.RECORD.ON.RV:9
+SET.RV:4 FORMULA:~rv4+1~ 
+FORMULA.END;
+SET.RV:30 FORMULA: FIELD=P3F12 ~ and ~  FIELD=P3F18 ~ and ~  FIELD=P3F20 
+FORMULA.END;
+SKIP.RECORD.ON.RV:30
+SUBREPORT.THRU.DOOR:21 TO.PANEL:8
+FIRST.PAGE.HEADER
+SET.RV:40 FORMULA:~''~ 
+FORMULA.END;
+OTHER.PAGE.HEADER
+TWO.LEVEL.REPORT.HEADER
+REPORT.BODY
+SET.RV:40 FORMULA:~subfield[rv20;' ';~  FIELD=P8F7 ~] cases~  CR
+~  case rv40='' of cv endof~  CR
+~  default rv40 ', ' cv~  CR
+~endcases~ 
+FORMULA.END;
+TWO.LEVEL.FOOTER
+PAGE.FOOTER
+FINAL.FOOTER
+END.SUBREPORT.FOR.PANEL:8
+~  @_dataLinkKey = @_dp[(~ RV:40;~A50A0~  CR
+~                       )];~  CR
+~  $_PackedDLKey = join("\t", @_dataLinkKey);~  CR
+~  &HTMLencode($_PackedDLKey);~  CR
+~  $_A_~ RV:4;~G999~ ~ = qq|<A HREF="http://~ RV:252;~A50;;T~ ~/|~  CR
+~                 . qq|~ RV:3;~A5;;T~ ~B~  FIELD=P3F18;~G99~ ~.pl/_Index=~ 
+ FIELD=P3F20;~GZZ9;;B~ ~&_N=$_N&UserID=$V{UserID}&|~  CR
+~                 . qq|_SubsetArray=$_PackedDLKey&_KeyArray=$_PackedDLKey">|;~ 
+ CR
+~  $_Z_~ RV:4;~G999~ ~ = "</A>";~ 
+TWO.LEVEL.FOOTER
+PAGE.FOOTER
+FINAL.FOOTER
+END.SUBREPORT.FOR.PANEL:3
+~  $_form = <<"EOF";~  CR
+~<table border="1">~  CR
+~<caption><H3>~  FIELD=P2F5;~A60;;T~ ~</H3></caption>~  CR
+~<tr><td>~  CR
+~(<A HREF="http://www.aros.net/~~sanbachs/~ RV:3;~A5;;T~ 
+~.HTM" target="_top">Back to Panel List</A>)~  CR
+~<FORM ACTION="http://~ RV:252;~A50;;T~ ~/~ RV:1;~A12;;T~ ~" METHOD=POST>~  CR
+~Navigating:~  CR
+~<INPUT TYPE=SUBMIT NAME="_Lookup" VALUE="First Record">~  CR
+~<INPUT TYPE=SUBMIT NAME="_Lookup" VALUE="Previous Record">~  CR
+~<INPUT TYPE=SUBMIT NAME="_Lookup" VALUE="Next Record">~  CR
+~<INPUT TYPE=SUBMIT NAME="_Lookup" VALUE="Last Record">~  CR
+~<br>Actions:~  CR
+~<INPUT TYPE=SUBMIT NAME="_Action" VALUE="Create a new record">~  CR
+~<INPUT TYPE=SUBMIT NAME="_Action" VALUE="Edit this record">~  CR
+~<INPUT TYPE=SUBMIT NAME="_Action" VALUE="Delete this record">~  CR
+~<tr><td>~  CR
+~<table>~  CR
+SET.RV:4 FORMULA:~0~ 
+FORMULA.END;
+SUBREPORT.THRU.DOOR:7 TO.PANEL:3
+FIRST.PAGE.HEADER
+OTHER.PAGE.HEADER
+TWO.LEVEL.REPORT.HEADER
+~rv30  -- Boolean: field is NOT a hidden field~ 
+REPORT.BODY
+SET.RV:9 FORMULA: FIELD=P3F12 
+FORMULA.END;
+SKIP.RECORD.ON.RV:9
+SET.RV:4 FORMULA:~rv4+1~ 
+FORMULA.END;
+SET.RV:30 FORMULA: FIELD=P3F15 ~=' '~ 
+FORMULA.END;
+SKIP.RECORD.ON.RV:30
+~<tr><td align="right" valign="top"><strong>~  CR
+ FIELD=P3F8;~A60;;T~ ~:</strong>~  CR
+~</td><td>$_A_~ RV:4;~G999~ ~$_dp[~ RV:4;~GZZ9;;B~ ~]$_Z_~ RV:4;~G999~ ~</td>~ 
+TWO.LEVEL.FOOTER
+PAGE.FOOTER
+FINAL.FOOTER
+END.SUBREPORT.FOR.PANEL:3
+~<INPUT TYPE=HIDDEN NAME="_Index" VALUE="$V{_Index}">~  CR
+~<INPUT TYPE=HIDDEN NAME="_KeyArray" VALUE="$_PackedKey">~  CR
+~<INPUT TYPE=HIDDEN NAME="_N" VALUE="$_N">~  CR
+~<INPUT TYPE=HIDDEN NAME="_SubsetArray" VALUE="$_PackedSubset">~  CR
+~<INPUT TYPE=HIDDEN NAME="UserID" VALUE="$V{UserID}">~  CR
+~</FORM>~  CR
+SUBREPORT.THRU.DOOR:12 TO.PANEL:3
+FIRST.PAGE.HEADER
+OTHER.PAGE.HEADER
+TWO.LEVEL.REPORT.HEADER
+REPORT.BODY
+~<FORM ACTION="http://~ RV:252;~A50;;T~ ~/~ RV:3;~U5;;T~ ~B~  FIELD=P3F18;~G99~ 
+~.pl" METHOD=POST>~  CR
+~<tr><td align="right" valign="top"><strong>~  CR
+ FIELD=P3F8;~A60;;T~ ~:</strong>~  CR
+~</td><td><INPUT TYPE=SUBMIT VALUE="~  FIELD=P3F8;~A60;;T~ ~"></td>~  CR
+~<INPUT TYPE=HIDDEN NAME="_Index" VALUE="~  FIELD=P3F20;~GZZ9;;B~ ~">~  CR
+~<INPUT TYPE=HIDDEN NAME="_N" VALUE="$_N">~  CR
+SET.RV:30 FORMULA:~0~ 
+FORMULA.END;
+SUBREPORT.THRU.DOOR:21 TO.PANEL:8
+FIRST.PAGE.HEADER
+OTHER.PAGE.HEADER
+TWO.LEVEL.REPORT.HEADER
+REPORT.BODY
+SET.RV:30 FORMULA:~rv30+1~ 
+FORMULA.END;
+TWO.LEVEL.FOOTER
+PAGE.FOOTER
+FINAL.FOOTER
+END.SUBREPORT.FOR.PANEL:8
+SET.RV:30 FORMULA:~apply.format['GZ9;;B';rv30]~ 
+FORMULA.END;
+SUBREPORT.THRU.DOOR:21 TO.PANEL:8
+FIRST.PAGE.HEADER
+OTHER.PAGE.HEADER
+TWO.LEVEL.REPORT.HEADER
+REPORT.BODY
+SET.RV:30 FORMULA:~rv30 '&#09;$_dp[' apply.format['GZZ9;;B';~  FIELD=P8F7 ~] ']'~ 
+FORMULA.END;
+TWO.LEVEL.FOOTER
+PAGE.FOOTER
+FINAL.FOOTER
+END.SUBREPORT.FOR.PANEL:8
+~<INPUT TYPE=HIDDEN NAME="_SubsetArray" VALUE="s~ RV:30;~A40;;T~ ~">~  CR
+~<INPUT TYPE=HIDDEN NAME="UserID" VALUE="$V{UserID}">~  CR
+~</FORM>~ 
+TWO.LEVEL.FOOTER
+PAGE.FOOTER
+FINAL.FOOTER
+END.SUBREPORT.FOR.PANEL:3
+~</table>~  CR
+~</table>~  CR
+~EOF~  CR
+~} else { # $_form eq "Edit"~  CR
+~  $_form = <<"EOF";~  CR
+~<table border="1">~  CR
+~<caption><H3>~  FIELD=P2F5;~A60;;T~ ~</H3></caption>~  CR
+~<tr><td>~  CR
+~(<A HREF="http://www.aros.net/~~sanbachs/~ RV:3;~A5;;T~ 
+~.HTM">Back to Panel List</A>)<BR>~  CR
+~<FORM ACTION="http://~ RV:252;~A50;;T~ ~/~ RV:1;~A12;;T~ ~" METHOD=POST>~  CR
+~To abandon $_actionType and resume browsing, press here:~  CR
+~<INPUT TYPE=SUBMIT NAME="_Action" VALUE="Cancel">~  CR
+~<INPUT TYPE=HIDDEN NAME="_Lookup" VALUE="Find">~  CR
+~<INPUT TYPE=HIDDEN NAME="_Index" VALUE="$V{_Index}">~  CR
+~<INPUT TYPE=HIDDEN NAME="_KeyArray" VALUE="$_PackedKey">~  CR
+~<INPUT TYPE=HIDDEN NAME="_N" VALUE="$_N">~  CR
+~<INPUT TYPE=HIDDEN NAME="_SubsetArray" VALUE="$_PackedSubset">~  CR
+~<INPUT TYPE=HIDDEN NAME="UserID" VALUE="$V{UserID}">~  CR
+~</FORM>~  CR
+~<FORM ACTION="http://~ RV:252;~A50;;T~ ~/~ RV:1;~A12;;T~ ~" METHOD=POST>~  CR
+~Press here to~  CR
+~<INPUT TYPE=SUBMIT NAME="_Action" VALUE="$_SaveLabel">~  CR
+~<tr><td>~  CR
+~<table>~ 
+SET.RV:4 FORMULA:~0~ 
+FORMULA.END;
+SUBREPORT.THRU.DOOR:7 TO.PANEL:3
+FIRST.PAGE.HEADER
+OTHER.PAGE.HEADER
+TWO.LEVEL.REPORT.HEADER
+REPORT.BODY
+SET.RV:9 FORMULA: FIELD=P3F12 
+FORMULA.END;
+SKIP.RECORD.ON.RV:9
+SET.RV:4 FORMULA:~rv4+1~ 
+FORMULA.END;
+SET.RV:30 FORMULA: FIELD=P3F22 ~<>'P'~ 
+FORMULA.END;
+SKIP.RECORD.ON.RV:30
+~<tr><td align="right" valign="top"><strong>~  CR
+~<INPUT TYPE=HIDDEN NAME="Old_P~  FIELD=P3F4;~GZZ9;;B~ ~F~  FIELD=P3F7;~GZZ9;;B~ 
+~" VALUE="$V{Old_P~  FIELD=P3F4;~GZZ9;;B~ ~F~  FIELD=P3F7;~GZZ9;;B~ ~}">~  CR
+ FIELD=P3F8;~A60;;T~ ~:</strong>~  CR
+~</td><td>~ 
+SET.RV:30 FORMULA:~if ~  FIELD=P3F13 ~ then~  CR
+~  cat.t['<TEXTAREA NAME="P'; apply.format['GZ9;;B';~  FIELD=P3F4 ~];~  CR
+~    'F'; apply.format['GZZ9;;B';~  FIELD=P3F7 ~];~  CR
+~    '" ROWS='; apply.format['GZ9;;B';~  FIELD=P3F13 ~];~  CR
+~    ' COLS='; apply.format['GZ9;;B';~  FIELD=P3F11 ~];~  CR
+~    ' WRAP=PHYSICAL>';~  CR
+~    '$_dp['; apply.format['GZ9;;B';rv4]; ']';~  CR
+~    '</TEXTAREA>']~  CR
+~else~  CR
+~  cat.t['<INPUT TYPE=TEXT NAME="P'; apply.format['GZ9;;B';~  FIELD=P3F4 ~];~ 
+ CR
+~    'F'; apply.format['GZZ9;;B';~  FIELD=P3F7 ~];~  CR
+~    '" VALUE="$_dp['; apply.format['GZ9;;B';rv4];~  CR
+~    ']" SIZE='; apply.format['GZ9;;B';~  FIELD=P3F11 ~];~  CR
+~    ' MAXLENGTH='; apply.format['GZ9;;B';~  FIELD=P3F11 ~]; '>']~  CR
+~endif~ 
+FORMULA.END;
+RV:30;~A78A0~  CR
+~</td></tr>~ 
+TWO.LEVEL.FOOTER
+PAGE.FOOTER
+FINAL.FOOTER
+END.SUBREPORT.FOR.PANEL:3
+~</table>~  CR
+~<INPUT TYPE=HIDDEN NAME="_Index" VALUE="$V{_Index}">~  CR
+~<INPUT TYPE=HIDDEN NAME="_KeyArray" VALUE="$_PackedKey">~  CR
+~<INPUT TYPE=HIDDEN NAME="_N" VALUE="$_N">~  CR
+~<INPUT TYPE=HIDDEN NAME="_SubsetArray" VALUE="$_PackedSubset">~  CR
+~<INPUT TYPE=HIDDEN NAME="UserID" VALUE="$V{UserID}">~  CR
+~</FORM>~  CR
+~</table>~  CR
+~EOF~  CR
+~}~  CR
+ CR
+~$_html = <<"EOF";~  CR
+~Content-type: text/html~  CR
+ CR
+~<HTML>~  CR
+~<HEAD>~  CR
+~<TITLE>~  FIELD=P2F5;~A60;;T~ ~</TITLE>~  CR
+~</HEAD>~  CR
+~<BODY>~  CR
+~$_StatusString~  CR
+~$_trace_cmd~  CR
+~$_SubsetIndicator~  CR
+~$_form~  CR
+~<h5 align=center>~  CR
+~Copyright &#169; 1996-2000 Sanbachs.com~  CR
+~</h5>~  CR
+~</BODY>~  CR
+~</HTML>~  CR
+~EOF~  CR
+ CR
+~if ($debug) { print TRACE $_html; }~  CR
+~print $_html;~  CR
+~if ($debug) { close(TRACE); }~  CR
+ CR
+TWO.LEVEL.FOOTER
+PAGE.FOOTER
+FINAL.FOOTER
+END.SUBREPORT.FOR.PANEL:2
+SUBREPORT.THRU.DOOR:4 TO.PANEL:2
+FIRST.PAGE.HEADER
+OTHER.PAGE.HEADER
+TWO.LEVEL.REPORT.HEADER
+~rv21   -- index key field numbers (A50A0)~  CR
+~rv22   -- index key field names (A63A0)~  CR
+~rv23   -- index key field widths (A50A0)~  CR
+~rv24   -- index lookup fields~  CR
+~rv25   -- index lookup field formats~  CR
+REPORT.BODY
+SET.RV:3 FORMULA:~length[~  FIELD=P2F3 ~] cases~  CR
+~  case cv<5 of~  CR
+~    ~  FIELD=P2F3 ~ endof~  CR
+~  default~  CR
+~    substring[~  FIELD=P2F3 ~;1;5]~  CR
+~endcases~ 
+FORMULA.END;
+SET.RV:1 FORMULA:~cat.t[rv3; 'B'; apply.format['G99';~  FIELD=P2F4 ~]; '.pl']~ 
+ CR
+
+FORMULA.END;
+SET.RV:2 FORMULA:~cat.t[rv3; 'L'; apply.format['G99';~  FIELD=P2F4 ~]; '.pl']~ 
+FORMULA.END;
+SET.RV:5 FORMULA:~cat.t[rv3; '\'; rv2]~ 
+FORMULA.END;
+TURN.FILE.OFF
+BEGIN.WRITING.TO.FILENAME.IN.RV:5
+TURN.FILE.ON
+~#!/usr/bin/perl -T~  CR
+ CR
+~# ~ RV:2;~A12;;T~ ~: ~  FIELD=P2F2;~A40;;T::C~ ~, Lookup Panel ~ 
+ FIELD=P2F4;~GZZ9;;B~  CR
+~require("lib.pl");~  CR
+ CR
+~$debug = 0;~  CR
+~$_dp_command = "~ RV:251;~A50;;T~ ~/fs-~ RV:3;~A5;;T~ ~";~  CR
+ CR
+~$ENV{'PATH'} = "/oh-no-you-dont";~  CR
+~if ($debug) { ~  CR
+~  open(TRACE, ">>trace.out"); ~  CR
+~  $_oldfh = select(TRACE);~  CR
+~  $| = 1;~  CR
+~  select($_oldfh);~  CR
+~  print TRACE "=====running ~ RV:2;~A12;;T~ ~:\n";~  CR
+~  print TRACE "Current directory is: ", `/bin/pwd`;~  CR
+~}~  CR
+ CR
+~$buffer = &getCGIinput();~  CR
+~&defineVariables($buffer);~  CR
+~if ($debug) {~  CR
+~  print TRACE "Variables: '", join("' '", %V), "'\n";~  CR
+~}~  CR
+ CR
+~@_Output = &runCommand($_dp_command, "p~ RV:245;~GZZ9;;B~ ~", "i2", "z5:1800",~ 
+ CR
+~                       "$ENV{REMOTE_ADDR}", "$V{UserID}", "q");~  CR
+~if ($_Output[0] ne "OK0") {~  CR
+~  &apologies("Authentication failed: please login again.");~  CR
+~  exit;~  CR
+~}~  CR
+ CR
+~#Provide default command choice: Action=FindFirstN with index #1~  CR
+~if (! defined $V{_Action}) {~  CR
+~  if ($debug) { print TRACE "setting to default action\n"; }~  CR
+~  $V{_Action} = "FindFirstN";~  CR
+~  $V{_Index} = ~  FIELD=P2F10P4F7;~GZZ9;;B~ ~;~  CR
+~}~  CR
+ CR
+~#Build key based on index number.~  CR
+~if (0) {~  CR
+SUBREPORT.THRU.DOOR:10 TO.PANEL:4
+FIRST.PAGE.HEADER
+OTHER.PAGE.HEADER
+TWO.LEVEL.REPORT.HEADER
+REPORT.BODY
+~} elsif ($V{_Index} == ~  FIELD=P4F7;~GZZ9;;B~ ~) {~  CR
+SET.RV:21 FORMULA:~''~ 
+FORMULA.END;
+SET.RV:22 FORMULA:~''~ 
+FORMULA.END;
+SET.RV:23 FORMULA:~''~ 
+FORMULA.END;
+SET.RV:24 FORMULA:~''~ 
+FORMULA.END;
+SET.RV:25 FORMULA:~''~ 
+FORMULA.END;
+SUBREPORT.THRU.DOOR:10 TO.PANEL:5
+FIRST.PAGE.HEADER
+OTHER.PAGE.HEADER
+TWO.LEVEL.REPORT.HEADER
+REPORT.BODY
+SET.RV:21 FORMULA:~if rv21=''~  CR
+~  then apply.format['GZZ9;;B';~  FIELD=P5F7 ~]~  CR
+~  else rv21 ', ' apply.format['GZZ9;;B';~  FIELD=P5F7 ~]~  CR
+~endif~ 
+FORMULA.END;
+SET.RV:22 FORMULA:~if rv22=''~  CR
+~  then cat.t['"'; ~  FIELD=P5F8 ~; '"']~  CR
+~  else cat.t[rv22; ','; 1 ; '"' ~  FIELD=P5F8 ~; '"']~  CR
+~endif~ 
+FORMULA.END;
+SET.RV:23 FORMULA:~(apply.format['GZ9;;B';~  FIELD=P5F7P3F11 ~]) cases~  CR
+~  case rv23='' of~  CR
+~    cv endof~  CR
+~  default~  CR
+~    rv23 ', ' cv~  CR
+~endcases~ 
+FORMULA.END;
+SET.RV:24 FORMULA:~rv24 ':' apply.format['GZZ9;;B';~  FIELD=P5F7 ~]~ 
+FORMULA.END;
+SET.RV:25 FORMULA:~(apply.format['GZ9;;B';~  FIELD=P5F13 ~]) cases~  CR
+~  case rv25='' of '"%-' cv '.' cv 's "' endof~  CR
+~  default cat.t[rv25; ' . "%-' cv '.' cv 's "']~  CR
+~endcases~ 
+FORMULA.END;
+TWO.LEVEL.FOOTER
+PAGE.FOOTER
+FINAL.FOOTER
+END.SUBREPORT.FOR.PANEL:5
+~  @_KeyFields = (~ RV:21;~A50A0~  CR
+~                );~  CR
+~  @_KeyFieldNames = (~ RV:22;~A63A0~  CR
+~                    );~  CR
+~  @_KeyWidths = (~ RV:23;~A50A0~  CR
+~                );~  CR
+~  $_IndexName = "~  FIELD=P4F8;~A60;;T~ ~";~  CR
+~  $_LookupFields = "~ RV:24;~A50;;T~ ~";~  CR
+~  $_LookupFormat = ~ RV:25;~A50A0~  CR
+~                   ;~  CR
+~  $_Selected_Index~  FIELD=P4F7;~GZZ9;;B~ ~ = "SELECTED";~ 
+TWO.LEVEL.FOOTER
+PAGE.FOOTER
+FINAL.FOOTER
+END.SUBREPORT.FOR.PANEL:4
+ CR
+~} else {~  CR
+~  if ($debug) { print TRACE "Bad _Index value ($V{_Index})\n"; }~  CR
+~  die "Unknown index (#$V{_Index})";~  CR
+~}~  CR
+~if ($debug) { ~  CR
+~  print TRACE "Key fields: (", @_KeyFields, ")\n"; ~  CR
+~  print TRACE "Index name: ", $_IndexName, "\n"; ~  CR
+~}~  CR
+ CR
+~if ($V{_Action} eq "Search") {~  CR
+~  @_StartKeyArray = ();~  CR
+~  foreach $i (0..$#_KeyFields) {~  CR
+~    push @_StartKeyArray, $V{"_Key$i"};~  CR
+~  }~  CR
+~  $V{_Action} = "FindNextN";~  CR
+~} elsif (defined $V{_StartKeyArray}) {~  CR
+~  @_StartKeyArray = &DPdecode($V{'_StartKeyArray'});~  CR
+~}~  CR
+ CR
+~$_N = $V{_N};~  CR
+~$_N =~~ tr/0-9//cd;        #clean up $_N in case it was changed or undefined~ 
+ CR
+~if ($_N < 5) {$_N = 5;}~  CR
+~if ($_N > 100) {$_N =100;}~  CR
+ CR
+~if      ($V{_Action} eq "FindFirstN") {~  CR
+~  @_dpargs = ("1" , "-" , "+$_N");~  CR
+~} elsif ($V{_Action} eq "FindPreviousN") {~  CR
+~  @_dpargs = ("f" , @_StartKeyArray , "+" , "+" , "+" , "-$_N");~  CR
+~} elsif ($V{_Action} eq "FindNextN") {~  CR
+~  @_dpargs = ("f" , @_StartKeyArray , "-" , "-" , "-" , "+$_N");~  CR
+~} elsif ($V{_Action} eq "FindLastN") {~  CR
+~  @_dpargs = ('$' , "+" , "-$_N");~  CR
+~} elsif ($V{_Action} eq "ChangeSettings") {~  CR
+~  @_dpargs = ("i$V{_Old_Index}" , "f" , @_StartKeyArray ,~  CR
+~              "i$V{_Index}" , "-" , "-" , "-" , "+$_N");~  CR
+~  if ($V{_Old_Index} != $V{_Index}) {~  CR
+~    @_SubsetArray = (); # changing indexes invalidates subsetting~  CR
+~  }~  CR
+~} else {~  CR
+~  die "Error: _Action=$V{_Action}?\n";~  CR
+~}~  CR
+ CR
+~@_dp_exec = ($_dp_command, "p~  FIELD=P2F4;~GZZ9;;B~ ~", ~  CR
+~    $_LookupFields, "i$V{_Index}", @_SubsetArray, @_dpargs, "q");~  CR
+~@_Output = &runCommand(@_dp_exec);~  CR
+~&checkForRunError();~  CR
+~if ($debug) {~  CR
+~  $" = " ";~  CR
+~  $_trace_cmd="@_dp_exec <HR>";~  CR
+~  $" = "\n";~  CR
+~  print TRACE "dp output: '@_Output'\n";~  CR
+~}~  CR
+ CR
+~if (@_SubsetArray > 1) {~  CR
+~  $_PackedSubset = &DPencode(@_SubsetArray);~  CR
+~  &URLencode($_URLpackedSubset = $_PackedSubset);~  CR
+~  &HTMLencode($_HTMLpackedSubset = $_PackedSubset);~  CR
+~}~  CR
+ CR
+~# If subsetted, display indicator.~  CR
+~if (@_SubsetArray > 1) {~  CR
+~  $_SubsetString = "Subset of ";~  CR
+~  $_SubsetIndicator = "(Looking only at records where ";~  CR
+~  foreach $_i ($[+1 .. $#_SubsetArray) {~  CR
+~    $_SubsetIndicator .= "<b>" . $_KeyFieldNames[$_i-1] . "</b>"~  CR
+~                      .  " = <i>" . $_SubsetArray[$_i] . "</i>";~  CR
+~    if ($_i != $#_SubsetArray) {~  CR
+~      $_SubsetIndicator .= " AND ";~  CR
+~    }~  CR
+~  }~  CR
+~  $_SubsetIndicator .= ")<BR>";~  CR
+~}~  CR
+ CR
+~$_SearchText = <<"EOF";~  CR
+~<A NAME="SEARCH">Search for:</A><BR>~  CR
+~<FORM ACTION="http://~ RV:252;~A50;;T~ ~/~ RV:2;~A12;;T~ ~" METHOD=POST>~  CR
+~<INPUT TYPE=HIDDEN NAME="_N" VALUE="$_N">~  CR
+~<INPUT TYPE=HIDDEN NAME="_Action" VALUE="Search">~  CR
+~<INPUT TYPE=HIDDEN NAME="_Index" VALUE="$V{_Index}">~  CR
+~EOF~  CR
+~$_SearchText .= "<PRE>";~  CR
+~foreach $_i ($[..$#_KeyWidths) {~  CR
+~  &HTMLencode($_KeyFieldNames[$_i]);~  CR
+~  $_SearchText .= $_KeyFieldNames[$_i] . ": ";~  CR
+~  if ($_i < $#_SubsetArray) {~  CR
+~    $_SearchText .= $_SubsetArray[$_i+1] . "\n";~  CR
+~    $_SearchText .= qq|<INPUT TYPE=HIDDEN NAME="_Key$_i"|;~  CR
+~    $_SearchText .= qq| VALUE="$_SubsetArray[$_i+1]">\n|;~  CR
+~  } else {~  CR
+~    $_SearchText .= qq|<INPUT TYPE=TEXT NAME="_Key$_i"|;~  CR
+~    $_SearchText .= qq| MAXLENGTH=$_KeyWidths[$_i]>\n|;~  CR
+~  }~  CR
+~}~  CR
+~$_SearchText .= "</PRE>\n";~  CR
+~$_SearchText .= <<"EOF";~  CR
+~<INPUT TYPE=HIDDEN NAME="_SubsetArray" VALUE="$_HTMLpackedSubset">~  CR
+~<INPUT TYPE=SUBMIT VALUE="Search">~  CR
+~<INPUT TYPE=HIDDEN NAME="UserID" VALUE="$V{UserID}">~  CR
+~</FORM>~  CR
+~EOF~  CR
+ CR
+~$_Lookup = "http://~ RV:252;~A50;;T~ ~/~ RV:2;~A12;;T~ ~";~  CR
+~$_Lookup .= "/_Index=$V{_Index}&_N=$_N&_SubsetArray=$_URLpackedSubset";~  CR
+~$_Lookup .= "&UserID=$V{UserID}";~  CR
+ CR
+~if ($_Output[0] eq '--Beginning--') {~  CR
+~  $_Prefix = "";~  CR
+~  shift @_Output;~  CR
+~  if ($debug) { print TRACE "At Top\n"; }~  CR
+~} else {~  CR
+~  if ($debug) { print TRACE "More At Top\n"; }~  CR
+~  shift @_Output;  #remove "--More--" line~  CR
+~  $_TopRecord = $_Output[0];~  CR
+~  shift @_Output;  #remove first record; we're replacing it with PREV button~ 
+ CR
+~  @_TopKeyArray = &DPdecode($_TopRecord);~  CR
+~  @_TopKeyArray = @_TopKeyArray[0..$#_KeyFields];~  CR
+~  $_PackedTopKey = &DPencode(@_TopKeyArray);~  CR
+~  &URLencode($_PackedTopKey);~  CR
+~  $_Prefix = qq|<A HREF="$_Lookup&_Action=FindPreviousN|;~  CR
+~  $_Prefix .= qq|&_StartKeyArray=$_PackedTopKey">More...</A>     |;~  CR
+~  $_Prefix .= qq|<A HREF="$_Lookup&_Action=FindFirstN|;~  CR
+~  $_Prefix .= qq|">...First Record...</A>\n|;~  CR
+~}~  CR
+ CR
+~if ($_Output[$#_Output] eq '--End--') {~  CR
+~  $_Suffix = "";~  CR
+~  pop @_Output;~  CR
+~  if ($debug) { print TRACE "At Bottom\n"; }~  CR
+~} else {~  CR
+~  if ($debug) { print TRACE "More At Bottom\n"; }~  CR
+~  pop @_Output;  #remove "--More--" line at the end~  CR
+~  $_BotRecord = $_Output[$#_Output];~  CR
+~  pop @_Output;  #remove last record; we're replacing it with NEXT button~  CR
+~  @_BotKeyArray = &DPdecode($_BotRecord);~  CR
+~  @_BotKeyArray = @_BotKeyArray[0..$#_KeyFields];~  CR
+~  $_PackedBotKey = &DPencode(@_BotKeyArray);~  CR
+~  &URLencode($_PackedBotKey);~  CR
+~  $_Suffix = qq|<A HREF="$_Lookup&_Action=FindNextN|;~  CR
+~  $_Suffix .= qq|&_StartKeyArray=$_PackedBotKey">More...</A>     |;~  CR
+~  $_Suffix .= qq|<A HREF="$_Lookup&_Action=FindLastN|;~  CR
+~  $_Suffix .= qq|">...Last Record...</A>\n|;~  CR
+~}~  CR
+ CR
+~$_Browse = "http://~ RV:252;~A50;;T~ ~/~ RV:1;~A12;;T~ ~";~  CR
+~$_Browse .= "/_Index=$V{_Index}&_N=$_N&_SubsetArray=$_URLpackedSubset";~  CR
+~$_Browse .= "&UserID=$V{UserID}&_KeyArray=";~  CR
+~foreach $_line (@_Output) {~  CR
+~  @_KeyArray = &DPdecode($_line);~  CR
+~  $_display = sprintf($_LookupFormat, @_KeyArray);~  CR
+~  &HTMLencode($_display);~  CR
+~  @_KeyArray = @_KeyArray[0..$#_KeyFields];~  CR
+~  $_PackedKey = &DPencode(@_KeyArray);~  CR
+~  &URLencode($_PackedKey);~  CR
+~  $_BodyText .= qq|<A HREF="$_Browse$_PackedKey" target="panel">$_display</A>\n|;~ 
+ CR
+~}~  CR
+ CR
+~if ($_BodyText eq "") {~  CR
+~  $_Prefix = "";~  CR
+~  $_BodyText = "There are no records (~ RV:3;~A5;;T~ ~: ~  FIELD=P2F4;~GZZ9;;B~ 
+~)\n";~  CR
+~  $_Suffix = "";~  CR
+~  if ($debug) { print TRACE "No records\n"; }~  CR
+~}~  CR
+ CR
+~if ($debug) { print TRACE "Processing ", $#_Output+1, " records...\n"; }~  CR
+~$_CurrentRecord = $_Output[0];~  CR
+~@_CurrentKeyArray = &DPdecode($_CurrentRecord);~  CR
+~@_CurrentKeyArray = @_CurrentKeyArray[0..$#_KeyFields];~  CR
+~$_PackedCurrentKey = &DPencode(@_CurrentKeyArray);~  CR
+~&HTMLencode($_PackedCurrentKey);~  CR
+ CR
+~$_ChangeSettings = <<"EOF";~  CR
+~<A NAME="SETTINGS">Change Settings</A><BR>~  CR
+~<FORM ACTION="http://~ RV:252;~A50;;T~ ~/~ RV:2;~A12;;T~ ~" METHOD=POST>~  CR
+~Display <INPUT TYPE=TEXT NAME="_N" VALUE="$_N" SIZE=5> lines.<BR>~  CR
+~<INPUT TYPE=HIDDEN NAME="_Action" VALUE="ChangeSettings">~  CR
+~<INPUT TYPE=HIDDEN NAME="_Old_Index" VALUE="$V{_Index}">~  CR
+~EOF~  CR
+~if ($#_SubsetArray <= 1) {~  CR
+~  $_ChangeSettings .= <<"EOF";~  CR
+~Ordering~  CR
+~<SELECT NAME="_Index">~  CR
+SUBREPORT.THRU.DOOR:10 TO.PANEL:4
+FIRST.PAGE.HEADER
+OTHER.PAGE.HEADER
+TWO.LEVEL.REPORT.HEADER
+REPORT.BODY
+~<OPTION VALUE="~  FIELD=P4F7;~GZZ9;;B~ ~" $_Selected_Index~ 
+ FIELD=P4F7;~GZZ9;;B~ ~>~  FIELD=P4F8;~A60;;T~ 
+TWO.LEVEL.FOOTER
+PAGE.FOOTER
+FINAL.FOOTER
+END.SUBREPORT.FOR.PANEL:4
+ CR
+~</SELECT><BR>~  CR
+~EOF~  CR
+~}~  CR
+~$_ChangeSettings .= <<"EOF";~  CR
+~<INPUT TYPE=HIDDEN NAME="_StartKeyArray" VALUE="$_PackedCurrentKey">~  CR
+~<INPUT TYPE=HIDDEN NAME="_SubsetArray" VALUE="$_HTMLpackedSubset">~  CR
+~<INPUT TYPE=SUBMIT VALUE="Change Settings">~  CR
+~<INPUT TYPE=HIDDEN NAME="UserID" VALUE="$V{UserID}">~  CR
+~</FORM>~  CR
+~EOF~  CR
+ CR
+~$_html = <<"EOF";~  CR
+~Content-type: text/html~  CR
+ CR
+~<HTML>~  CR
+~<HEAD>~  CR
+~<TITLE>~  FIELD=P2F5;~A60;;T~ ~ Lookup</TITLE>~  CR
+~<BASE "http://~ RV:252;~A50;;T~ ~/~ RV:2;~A12;;T~ ~">~  CR
+~</HEAD>~  CR
+~<BODY>~  CR
+~$_StatusString~  CR
+~$_trace_cmd~  CR
+~Sorted $_IndexName~  CR
+~<PRE>$_Prefix$_BodyText$_Suffix</PRE>~  CR
+~<HR>~  CR
+~$_ChangeSettings~  CR
+~<HR>~  CR
+~$_SearchText~  CR
+~<HR>~  CR
+~<FORM ACTION="http://~ RV:252;~A50;;T~ ~/~ RV:1;~A12;;T~ ~" METHOD=POST>~  CR
+~<INPUT TYPE=SUBMIT NAME="_Action" VALUE="Create a new record">~  CR
+~<INPUT TYPE=HIDDEN NAME="_Index" VALUE="$V{_Index}">~  CR
+~<INPUT TYPE=HIDDEN NAME="_N" VALUE="$_N">~  CR
+~<INPUT TYPE=HIDDEN NAME="_SubsetArray" VALUE="$_PackedSubset">~  CR
+~<INPUT TYPE=HIDDEN NAME="UserID" VALUE="$V{UserID}">~  CR
+~</FORM>~  CR
+~</BODY>~  CR
+~</HTML>~  CR
+~EOF~  CR
+ CR
+~if ($debug) { print TRACE $_html; }~  CR
+~print $_html;~  CR
+~if ($debug) { close(TRACE); }~  CR
+ CR
+TWO.LEVEL.FOOTER
+PAGE.FOOTER
+FINAL.FOOTER
+END.SUBREPORT.FOR.PANEL:2
+TWO.LEVEL.FOOTER
+PAGE.FOOTER
+FINAL.FOOTER
+REPORT.END;
+

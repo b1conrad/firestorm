@@ -1,0 +1,23 @@
+
+ACCTS.STR (ACCTS)                                               01/23/01 23:35
+
+   P1 1. Accounts
+
+      P1F1   Account Number                           GZZZZZZZZ9
+      P1F2   Account Balance                          G-$Z,ZZZ,ZZZ.99
+      P1F3   Account Transactions link
+
+      I1 by Account Number
+             1 Account Number
+
+   P2 2. Transactions
+
+      P2F1   Account Number                           GZZZZZZZZ9
+      P2F2   Transaction Date                         D99/99/9999::N
+      P2F3   Transaction Time                         T99:99:99::N
+      P2F4   Transaction Amount                       G-$ZZ,ZZZ.99
+
+      I1 by Account Number, Transaction Date, Transaction Time
+             1 Account Number
+             2 Transaction Date
+             3 Transaction Time

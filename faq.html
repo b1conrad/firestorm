@@ -1,0 +1,274 @@
+<html>
+<head>
+<title>Firestorm – Frequently Asked Questions</title>
+</head>
+
+<body>
+<table>
+<tr>
+<td valign=top width=15%> </td>
+<td>
+<table bgcolor="#FFFFFF" cellpadding=0 cellspacing=0 width=100%>
+<tr>
+<td align=left>
+<strong><font size=+5>sanbachs.NET</font></strong><br>
+<strong><font size=+1>Serving the DataPerfect* Community</font></strong>
+</td>
+<td align=right><a href=http://www.dataperfect.nl/><img src=../logo.gif width=318 height=61 border=0></a></td>
+</tr>
+</table>
+<HR>
+<table width=100%>
+<tr>
+<td>
+<a href=../index.html>Home</a> >
+<a href=index.html>Firestorm</a> >
+Frequently Asked Questions
+</td>
+</tr>
+<tr>
+<td align=right>Last updated: December 6, 2001</td>
+</tr>
+</table>
+
+<h1>Firestorm – Frequently Asked Questions</h1>
+
+<p>
+<a href=faq1.html>Earlier questions</a> remain available.
+</p>
+
+
+<p>
+Thanks to <a href=mailto:jerom@xs4all.nl>Jeroen Vader</a> 
+for questions 10 through 14.
+And to <a href=mailto:neutondata@yahoo.com>Larry Neuton</a> for question 15.
+Thanks to <a href=mailto:Pieter.Vankeerberghen@afigp.fgov.be>Pieter Vankeerberghen</a> for <a href=#16>question 16</a>.
+</p>
+
+<p><strong>Question</strong>
+10. I understand there's a need to generate the panel byte array
+description for an STR, and that the resulting pba.c is then used to
+generate a separate executable for every database. How difficult would
+it be, in your opinion, to write a general executable instead, and then
+have the database definition (the STR) read after running this general
+executable? This would be more like the situation of running DP.EXE and
+then loading an STR on demand. Do you have any idea on how this would
+affect speed and/or memory usage? Would it be possible by writing
+something on top of dpif.c? (My C knowledge is not so thorough to
+immediately judge this, unfortunately.) The rationale behind my question
+is that one general executable would make development easier.
+</p>
+
+<p><strong>Answer</strong>
+10. This could be done, and should have very little effect on memory usage.
+Each script would take a little bit more time to run because each one would
+have to read the STR file before it began. By generating the pba.c offline,
+this work is done only once.
+</p>
+
+<p><strong>Question</strong>
+11. Am I correct in understanding that you need to recompile 
+<ul>
+<li>
+after having performed an index regeneration (root index position
+changes)
+<li>
+after adding/changing/removing a field definition (field definition
+changes)
+</ul>
+</p>
+
+<p><strong>Answer</strong>
+11. The pba.c file will need to be regenerated and recompiled whenever there
+is a change to real fields or index definitions.
+</p>
+
+<p>
+The question of root index positions is more delicate.
+The METADXP program does not export the root index position information
+from the STR file. 
+Instead there is a report in METAD that assigns index base blocks in a
+standard way.
+After changing an index definition, you will need to delete the .IND file
+and have DataPerfect recreate the index file and then recreate the indexes
+for all panels.
+</p>
+
+<p><strong>Question</strong>
+12. Is there any other reason apart from lack of time and/or effort that
+it's been decided not to add userID checking yet?
+</p>
+
+<p><strong>Answer</strong>
+12. This needs to be added in each CGI script where it is needed.
+We have developed a few techniques for doing this and will document them
+soon.
+</p>
+
+<p><strong>Question</strong>
+13. Is the FORTH code in dot.c a subset of the code used to generate
+DP.EXE?
+</p>
+
+<p><strong>Answer</strong>
+13. No, it was developed independently, by the same author.
+</p>
+
+<p><strong>Question</strong>
+14. In the case of G- and H-fields with decimals the procedure does not
+produce correct results when the decimal point is NOT '.'. On the
+European continent, we generally use '.' as thousands separator, and ','
+as the decimal 'point'. When following the pba.c generation procedure as
+it currently is, a 'GZ.ZZ9,99', would contain 6 decimals, while we
+Europeans would expect 2. This information is correctly stored in the
+STR, but not read by the metadxp.com program. Panel 1 of the metad
+database has the '.'  hardcoded in the field formula for P3F28. This
+then creates errors in the generated pba.c files.
+</p>
+
+<p><strong>Answer</strong>
+14. You are correct.
+The METAD database will need some changes to handle this.
+Also, the function <code>FSformatG</code> will need to be improved.
+</p>
+
+<p><strong>Question</strong>
+15. Is there a simpler way to display data from just one
+panel to the web? It would be great if a user of my
+library automation program could display a library
+catalog (i.e., the data from the "Library Catalog"
+panel) on the web. I took a brief look at the
+Firestorm site but it seems technically over my head...
+I don't know anything about C or Perl programming and
+only a rough idea of how cgi scripts work.
+</p>
+
+<p><strong>Answer</strong>
+15. sanbachs.NET offers a <a href=hosting.html>hosting service</a> that may
+be of interest.
+</p>
+
+<p><a name=16><strong>Question</strong></a>
+16. We share a rather large DP application with passwords (3 levels - one to
+change structure and two to read/write).  We would like to write and read in
+this DP using Firestorm, but how do we have to deal with these passwords?
+</p>
+
+<p><strong>Answer</strong>
+16. Firestorm coordinates data access, using the index and data files together in a manner that is compatible with DataPerfect. However, it does nothing special with passwords, keep-a-total, formulas, etc.
+</p>
+
+<p>
+Furthermore, on the web there is no notion of session.
+With DataPerfect, each user is running the DP client software on their own workstations.
+Browsers do not maintain any information about what the user is doing, or who they are, from one web page request to another.
+</p>
+
+<p>
+Here is how I have dealt with passwords.
+</p>
+
+<p>
+A DP application with passwords will usually have a USER_ID panel.
+For example, this might be panel 43.
+To this panel, add two fields, one for an IP address and one for a timestamp.
+For example, these might be fields 4 and 5 of the USER_ID panel.
+Also, add a new index using field 1 and the IP address.
+Then, in each CGI script, call a function like the following:
+</p>
+
+<pre>
+ 1 int authenticate(Field_Value *ID, Field_Value *IP)
+ 2 {
+ 3   FS_panel p43;
+ 4   char AuthTime[15];
+ 5   time_t authTime, now;
+ 6   Field_Value *nowTime;
+ 7
+ 8   p43 = FSsetPanel(43);
+ 9   if ((FSequalRec(p43,FSifList(p43,2,ID,IP))) != FS_OK) {
+10     return 0;
+11   } else {
+12     authTime = atol(FSfield(p43,5)->field_data);
+13     time(&now);
+14     if ((now-authTime) <= 1800) { /* one half hour of inactivity */
+15       sprintf(AuthTime,"%ld",now);
+16       nowTime = NewField('3',5,strlen(AuthTime),AuthTime);
+17       FSupdateField(p43, FSifList(p43,2,ID,IP), 5, ':', nowTime);
+18       return 1;
+19     }
+20     return 0;
+21   }
+23 }
+</pre>
+
+<p>
+Pass the user id from web page to web page.
+This can be done either using hidden fields in each form, or by a technique
+called "URL stuffing" which includes it in each URL.
+In each CGI script, call the function defined in line 1 early and if it fails
+(returns zero) invite the user to login again.
+Authentication can fail for two reasons.
+In line 10 it fails because there is no record for the user and IP address.
+In line 20 it fails because the user has been inactive for over 1800 seconds.
+In line 17 the function updates the record to the current time.
+</p>
+
+<p>
+To start the authentication process, use code like the following right
+after the user has logged in:
+</p>
+
+<pre>
+ 1 time(&now);
+ 2 sprintf(AuthTime,"%ld",now);
+ 3 nowTime = NewField('3',5,strlen(AuthTime),AuthTime);
+ 4 FSupdateField(p43, FSifList(p43,1,ID), 4, ':', IP);
+ 5 FSupdateField(p43, FSifList(p43,1,ID), 5, ':', nowTime);
+</pre>
+
+<p>
+This gets the current time as a long integer (line 1),
+converts it to a character string (line 2),
+creates a new field value from this string (line 3),
+stores the IP address in the USER_ID panel (line 4),
+and stores the current time in the USER_ID panel (line 5).
+</p>
+
+<HR>
+<H2>Contacting sanbachs.NET</h2>
+<P>Sign or browse our
+<A HREF="http://cgi.aros.net/cgi-bin/cgiwrap/~sanbachs/ngb1.cgi?WsoID=1&WsID=5">guest book</A>.
+</P>
+<address>
+<a href="mailto:webmaster@sanbachs.com">webmaster@sanbachs.com</a><br>
+<a href="mailto:l.jbastian@worldnet.att.net">A. Lewis Bastian, Jr.</a><br>
+<a href="../bruce/resume.html">Bruce Conrad</a><br>
+<a href="mailto:thom@xmission.com">Thom Boyer</a>
+</address>
+<HR>
+<H3>Disclaimer</H3>
+*<FONT COLOR="#0000FF">DataPerfect&reg;</FONT>
+is a copyright of Novell, Inc.
+sanbachs.NET is not affiliated with Novell, Inc.<BR>
+<HR>
+<img src="http://www.sanbachs.net/cgi-bin/countg.cgi?Name=fsfaq2">
+visitors since December 25, 2000.
+</td>
+</tr>
+</table>
+<h5 align=center>Copyright &#169; 2001 sanbachs.NET</h5>
+<!-- Start Quantcast tag -->
+<script type="text/javascript">
+_qoptions={
+labels:"firestorm",
+qacct:"p-74TfK8Z7JORIY"
+};
+</script>
+<script type="text/javascript" src="http://edge.quantserve.com/quant.js"></script>
+<noscript>
+<img src="http://pixel.quantserve.com/pixel/p-74TfK8Z7JORIY.gif" style="display: none;" border="0" height="1" width="1" alt="Quantcast"/>
+</noscript>
+<!-- End Quantcast tag -->
+</body>
+</html>

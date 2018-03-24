@@ -1,0 +1,424 @@
+<html>
+<head>
+<title>Firestorm – Usage Guide</title>
+</head>
+
+<body>
+<table>
+<tr>
+<td valign=top width=15%> </td>
+<td>
+<table bgcolor="#FFFFFF" cellpadding=0 cellspacing=0 width=100%>
+<tr>
+<td align=left>
+<strong><font size=+5>sanbachs.NET</font></strong><br>
+<strong><font size=+1>Serving the DataPerfect* Community</font></strong>
+</td>
+<td align=right><a href=http://www.dataperfect.nl/><img src=../logo.gif width=318 height=61 border=0></a></td>
+</tr>
+</table>
+<HR>
+<table width=100%>
+<tr>
+<td>
+<a href=../index.html>Home</a> >
+<a href=index.html>Firestorm</a> >
+<a href=firestorm.html>Principles of
+Operation</a> >
+<a href=fs.html>Programmatic Interface</a> >
+Usage Guide
+</td>
+<tr>
+<td align=right>Last updated: December 5, 2000</td>
+</tr>
+</table>
+
+<h1>Firestorm – Usage Guide</h1>
+
+<!--
+<p>
+This usage guide is being written right now. Please reload from time to time.
+Thank you for your interest and patience!
+</p>
+-->
+
+<p>
+This usage guide documents the way in which Firestorm has been used over the
+last four years.
+Many of the instructions are based on conventions and are open to change as
+more experience is gained, and better ways are found to do things.
+Please don't hesitate to 
+<a href=mailto:improvements@sanbachs.com?Subject=better-way>suggest 
+improvements</a>.
+</p>
+
+<p>
+There are three directory structures that you will need to set up.
+<ol>
+<li>METAD and generation of PBA.C files (on a machine that can run DataPerfect)
+<li>Firestorm and CGI scripts (on a machine that can generate executables that
+will run on your web server)
+<li>Web server HTML documents and CGI executables
+</ol>
+
+<p>
+There are three kinds of work that you will need to do in order to create
+a web application based on your DataPerfect database.
+Using METAD, which is itself a DataPerfect database (somewhat like the 
+<a href=http://www.dataperfect.nl/steman.php3>STE Manager</a>, 
+though not nearly as complete), you will create the PBA.C file
+that describes your database.
+This file contains a small part of the information from your DataPerfect
+structure file, in a format suitable for the programmatic interface.
+We suggest that you place the METAD database, and the accompanying
+METADXP.COM program in a directory named "metad".
+The METAD database will produce its output in a subdirectory whose
+name is (by default) the first five characters of your database name.
+</p>
+
+<p>
+The second kind of work you will do is to compile the ANSI C source code
+for the Firestorm database engine.
+We suggest that you do this work in a directory named "fs".
+Again, the CGI scripts that you will write for a particular one of your
+databases will be placed in a subdirectory whose name is the
+first five characters of your database name (or a five character
+abbreviation of your choice).
+</p>
+
+<p>
+Once you have created and compiled the PBA.C file, and have compiled the
+Firestorm source code, and have compiled and linked these with your own
+CGI scripts, you will need to copy the executable files into a directory
+that can be used by your web server.
+So, the third kind of work you have to do is to set up a web server, and
+configure it to run CGI scripts.
+All of the database files (except the .STR file) will also need to be
+copied (or reside permanently) in the directory from which the CGI scripts
+are to be run.
+</p>
+
+<h2>1. METAD and generation of PBA.C files</h2>
+<p>
+Unzip md001126.zip in a directory named METAD.
+Create the METAD database using DPIMP.COM.
+If you followed the instructions in the
+<a href=installation.html>installation guide</a>
+you will have already performed these steps.
+</p>
+
+<p>
+For each database you wish to use on the Internet, you will need to follow 
+the same steps.
+These are given below (using METAD itself as an example).
+<ol>
+<li>Choose an abbreviation for the database name that is no more than
+five characters in length (METAD)
+<li>Make a subdirectory of that name (mkdir metad)
+<li>Change directories to the new subdirectory (cd metad)
+<li>Copy the database structure file from wherever you customarily work on
+it to the new subdirectory (copy ..\metad.str .)
+<li>Run the program METADXP.COM (..\metadxp) and press Enter when prompted
+for the database structure file. This will create a file with a ".{X}"
+extension (METAD.{X})
+<li>Return to the parent directory (cd ..)
+<li>Run DataPerfect on the METAD database (dp metad), at which time you will
+see the <a href=images/metad-menu.gif>METAD menu</a>
+<li>Type option number 98 and press Enter to see the
+<a href=images/metad-panels.gif>METAD panel list</a>
+<li>Press Enter to select the "Database Description" panel
+<li>Press Shift-F9, select option "8 - Import Transaction Log", and Enter the 
+filename (METAD\METAD.{X}). When the import is finished, press any key and you
+will see <a href=images/metad-after-import.gif>the results of importing
+the file METAD\METAD.{X}</a> (which was created in step 5)
+<li>Press F6 to edit, type a 1 (one) to change the database to be number one,
+and Tab twice to the Filename field and ensure that the first five characters
+of this name match the subdirectory name created in step 2. 
+Then press F10 to save the record. There will be a short pause while
+the cascade update feature changes the database number in all of the records.
+Then you will see <a href=images/metad-after-renumber.gif>the renumbered
+record</a> in the Database Description panel
+<li>Now press Shift-F7 to see the
+<a href=images/metad-reports.gif>report list</a>
+<li>Press the down-arrow once to select the report named
+"Assign index base blocks" and press Enter. Then press F7 twice to return
+to the record, and press Alt-F7 to run the report for this record. Press
+any key when the report is finished
+<li>Press Shift-F7, then down-arrow to select the report named
+"Count fields and indexes" and press Enter. Then press F7 twice to return
+to the record, and press Alt-F7 to run the report for this record. Press
+any key when the report is finished
+<li>At this point, you will see the 
+<a href=images/metad-after-count.gif>Database Description record with the
+correct number of fields</a> per panel shown in the right hand column
+<li>Press Shift-F7, then down-arrow to select the report named
+"Generate PBA.C" and press Enter. Then press F7 twice to return to the
+record, and press Alt-F7 to run the report for this record. Press any key
+when the report is finished. This will create the PBA.C file for the
+database (metad\PBA.C). If you see an
+<a href=images/metad-error.gif>error screen</a> 
+it is probably because you didn't
+create a directory name that the report expects (METAD) in step 2 or didn't
+edit the Filename field (step 11) 
+in the Database Description record so that its first
+five characters match the subdirectory name
+</ol>
+
+<p>
+Repeat steps 1-16 for each database you want to use with Firestorm,
+replacing "metad" and "METAD" with your five character abbreviation in
+steps 1, 2, 3, 4, 10, and 16.
+Step 11 will need to be changed to give each database its own number, one
+for the first, two for the second, and so forth.
+If you get to database number 22, you will need to have that one be number
+23, as METADXP.COM always produces number 22, and you need to leave that
+number free for the import.
+</p>
+
+<p>
+Whenever you change one of your databases, by adding or removing fields or
+indexes, you will need to repeat steps 3-16 to generate a new PBA.C file
+that describes it correctly.
+You may delete its record in the Database Description panel and reuse the
+same number, or give the new version a new number, as you wish.
+</p>
+
+<p>
+The directory structure for this first kind of work will look something like
+the following diagram.
+This assumes that you have followed steps 1-16 for the metad.str database
+itself, for one of your databases named "phone.str", and for one of your
+databases named "contacts.str" for which you have chosen the abbreviation
+"cntct".
+<pre>
+  |
+  +-metad
+  |   |
+  |   +-metad.str (etc.)
+  |   +-METADXP.COM
+  |   +-metad
+  |   |   |
+  |   |   +-metad.str
+  |   |   +-METAD.{X}
+  |   |   +-PBA.C
+  |   +-phone
+  |   |   |
+  |   |   +-phone.str
+  |   |   +-PHONE.{X}
+  |   |   +-PBA.C
+  |   +-cntct
+  |       |
+  |       +-contacts.str
+  |       +-CONTACTS.{X}
+  |       +-PBA.C
+  |
+</pre>
+
+<h2>2. Firestorm and CGI scripts</h2>
+
+<p>
+If you have followed the
+<a href=installation.html>installation guide</a>
+you will have set up a directory named "fs", unzipped one of the Firestorm
+source code archives, and compiled the code.
+</p>
+
+<p>
+This directory should contain the files from the following list.
+If you are compiling on a Windows machine, the object files will have
+a ".OBJ" extension, rather than the ".o" extension used in UNIX-like systems.
+The various files are given in order from the lowest, most central, or
+foundational layer first.
+<dl>
+<dt>dot.c<dd>The foundation of all, this is the Forth engine.
+It is accompanied by dot.h, forth.h, and ftable.h, which together
+describe certain aspects of the Forth engine.
+Another definition file, machine.h, describes certain data types used
+throughout.
+<dt>engine.c<dd>The C program that interprets the Forth engine. It is
+accompanied by engine.h, which describes it for the next level.
+This program includes symbols.c, which contains information useful when
+debugging is needed at the engine level (neither frequently nor recently).
+<dt>dpif.c<dd>The lowest level of the programmatic interface. Its entry
+points are described by dpif.h.
+All current and future uses of the engine are and will be built on top
+of this level.
+<dt>dp.c<dd>This implements the
+<a href=cli.html>command line interface</a>, using the lower level parts.
+It also needs to be linked with the compiled version of map.c, which maps
+between the DOS character set and the ISO Latin1 character set used on the web.
+A PBA.C file must be linked with this program. 
+The structures used are defined in the the definitional file pba.h.
+<dt>fsCore.c<dd>This implements the 
+<a href=fs.html>programmatic interface</a>. Either dp.c or fsCore.c can
+be used with the underlying levels, but not both at the same time.
+A PBA.C file must be linked with this program. 
+The definitional file fs.h describes the data types and function calls that
+together make up the programmatic interface.
+<dt>fsMain.c<dd>This provides a main program for CGI scripts. It accepts
+input values from a URL or from a form and makes them available to your
+CGI program, which must be named "FSquery". See the programmatic interface
+<a href=demo.html>demonstration</a> (part five)
+for more information, and a working example.
+</dl>
+
+<p>
+All of the programs described above, together with their .o (or .OBJ)
+compiled versions, will reside in the fs directory.
+Make a subdirectory of fs, named with your five character abbreviation,
+for each of your databases.
+Copy into each of these the corresponding PBA.C program, which was generated
+by the METAD report.
+Compile this program to produce PBA.O (or PBA.OBJ).
+</p>
+
+<p>
+With all of this done, you are ready to begin making executable programs
+for your database.
+To make a command line program for your database, link together 
+pba.o ../dp.o ../map.o ../dpif.o ../engine.o and ../dot.o to form the
+executable program named fs-xxxxx, where "xxxxx" is replaced with your
+five character abbreviation.
+The command to do this on UNIX-like machines is:
+<pre>
+  gcc -o fs-xxxxx pba.o ../dp.o ../map.o ../dpif.o ../engine.o ../dot.o
+</pre>
+
+<p>
+We recommend that you create a subdirectory (of the database-specific
+directory) named "Data".
+Copy into this directory all of the panel data files, the index file, and
+the .TXX file for your database.
+One important note here is that the index base blocks must be assigned
+the same way in the PBA.C file and your database. 
+The simplest way to ensure this is to delete the .IND index file, run
+DataPerfect (answering 
+"1 - Create a New Index File with New Indexes for All Data Files." 
+when prompted) on your database. Then,
+go into one of its panels (doesn't matter which one), and answer
+"3 - Re-create the Indexes for All Files." when prompted.
+This will create a new index file with all of the index blocks allocated
+in the same way the PBA.C assumes.
+</p>
+
+<p>
+Now change into the Data subdirectory and try out the 
+<a href=cli.html>command line interface</a> for your database.
+</p>
+
+<p>
+Now, working in the database-specific subdirectory of fs, you can begin to
+create your CGI scripts. Let's say, for example, that you are working with
+a contacts database, for which you have chosen the abbreviation "cntct" and
+that you are working on a CGI script named "cntct-enter.c" to accept the
+data from an HTML form and add a new contact to the database.
+Your directory structure will look something like this:
+<pre>
+  |
+  +-fs
+  |  |
+  |  +-dot.c, dot.o, engine.c, etc.
+  |  +-cntct
+  |  |   |
+  |  |   +-pba.c, pba.o
+  |  |   +-fs-cntct
+  |  |   +-Data
+  |  |   |   |
+  |  |   |   +-contacts.txx
+  |  |   |   +-contacts.ind
+  |  |   |   +-contacts.dat, etc.
+  |  |   |
+  |  |   +-cntct-enter.c
+  |  |   +-cntct-enter.o
+  |  |   +-cntct-enter.cgi
+  |  |
+  |  +-phone
+  |      |
+  |      +-pba.c, pba.o
+  |      +-fs-phone
+  |      +-Data
+  |          |
+  |          +-phone.txx, phone.ind, etc.
+</pre>
+
+<p>
+The command to compile cntct-enter.c and create cntct-enter.o is, 
+on UNIX-like systems:
+<pre>
+   gcc -c cntct-enter.c
+</pre>
+
+<p>
+The command to create the executable file, cntct-enter.cgi, is:
+<pre>
+   gcc -o cntct-enter.cgi cntct-enter.o pba.o \
+      ../fsMain.o ../fsCore.o ../dpif.o ../engine.o ../dot.o
+</pre>
+
+<p>
+Once the executable CGI script has been created, you can test it from the 
+command line.
+For example, assuming a very simple contact structure, consisting of
+Name, Title, and Phone, you might test it like this:
+<pre>
+  cd Data
+  ../cntct-enter.cgi Name=Bob "Title=Mangaging Director" Phone=555-4073
+</pre>
+
+<p>
+To add the same record using the command line interface would be done this way:
+<pre>
+  cd Data
+  ../fs-cntct p1 a Bob "Managing Director" 555-4073 q
+</pre>
+
+<p>
+At this point, you are now able to create Firestorm programs to access your
+database on a UNIX-like system.
+You have a command line interface and the ability to write an unlimited 
+number of custom access programs and executable CGI scripts.
+The next step is to get these CGI scripts running in conjuction with your
+web server, so that you have Internet (or intranet) access to your database.
+
+<h2> 3. Web server HTML documents and CGI executables</h2>
+This section is planned but not yet written. Please check back later.
+Thank you for your interest and patience.
+
+<HR>
+<H2>Contacting sanbachs.NET</h2>
+<P>Sign or browse our
+<A HREF="http://cgi.aros.net/cgi-bin/cgiwrap/~sanbachs/ngb1.cgi?WsoID=1&WsID=5">guest book</A>.
+</P>
+<address>
+<a href="mailto:webmaster@sanbachs.com">webmaster@sanbachs.com</a><br>
+<a href="mailto:l.jbastian@worldnet.att.net">A. Lewis Bastian, Jr.</a><br>
+<a href="../bruce/resume.html">Bruce Conrad</a><br>
+<a href="mailto:thom@xmission.com">Thom Boyer</a>
+</address>
+<HR>
+<H3>Disclaimer</H3>
+*<FONT COLOR="#0000FF">DataPerfect&reg;</FONT>
+is a copyright of Novell, Inc.
+sanbachs.NET is not affiliated with Novell, Inc.<BR>
+<HR>
+<img src="http://www.sanbachs.net/cgi-bin/countg.cgi?Name=fsusage">
+visitors since November 23, 2000.
+</td>
+</tr>
+</table>
+<h5 align=center>Copyright &#169; 2001 sanbachs.NET</h5>
+<!-- Start Quantcast tag -->
+<script type="text/javascript">
+_qoptions={
+labels:"firestorm",
+qacct:"p-74TfK8Z7JORIY"
+};
+</script>
+<script type="text/javascript" src="http://edge.quantserve.com/quant.js"></script>
+<noscript>
+<img src="http://pixel.quantserve.com/pixel/p-74TfK8Z7JORIY.gif" style="display: none;" border="0" height="1" width="1" alt="Quantcast"/>
+</noscript>
+<!-- End Quantcast tag -->
+</body>
+</html>
+

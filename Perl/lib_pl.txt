@@ -1,0 +1,214 @@
+# lib.pl: Perl library
+#  today() returns a string in the format "YYYY/MM/DD"
+#  now() returns the time in the format "HH:MM:SS" (24-hour time)
+
+sub HTMLencode {
+  $_[$[] =~ s/([<>'"&\0-\37\177-\377])/sprintf("&#%ld;", ord($1))/eg;
+}
+
+sub URLencode {
+  $_[$[] =~ s/([^-.\@_a-zA-Z0-9 ])/sprintf("%%%2.2lx", ord($1))/eg;
+  $_[$[] =~ s/%2[aA]/\*0/g;     #convert '*' to '*0'
+  $_[$[] =~ s/%2[fF]/\*1/g;     #convert '/' to '*1'
+  $_[$[] =~ s/%26/\*2/g;        #convert '&' to '*2'
+  $_[$[] =~ s/%23/\*3/g;        #convert '#' to '*3'
+  $_[$[] =~ tr/ /+/;
+}
+
+sub URLdecode {
+  $_[$[] =~ tr/+/ /;
+  $_[$[] =~ s|\*3|\#|g;      #convert '*3' to '#'
+  $_[$[] =~ s|\*2|\&|g;      #convert '*2' to '&'
+  $_[$[] =~ s|\*1|\/|g;      #convert '*1' to '/'
+  $_[$[] =~ s|\*0|\*|g;      #convert '*0' to '*'
+  $_[$[] =~ s/%([0-9a-fA-F][0-9a-fA-F])/pack("C", hex($1))/eg;
+}
+
+sub DPencode {
+  #Turn a list of strings into a single string.
+  #The strings in the original list may contain newlines, tabs, backslashes,
+  #  and other characters.  The returned (encoded) string will not contain
+  #  any literal newlines, and will contain coded versions of the
+  #  constituent strings, separated by tabs. The constituent strings will
+  #  have any embedded tabs, newlines or backslashes encoded as a 2-char
+  #  sequence ('\', followed by 't', 'n', or 's').
+  local (@fields) = @_;
+  for (@fields) {
+    s/\\/\\s/g;
+    s/\t/\\t/g;
+    s/\n/\\n/g;
+  }
+  join("\t", @fields);
+}
+
+sub DPdecode {
+  #Turn an encoded list of strings into an array of strings.
+  local ($line) = @_;
+  local (@fields) = split(/\t/, $line);
+  for (@fields) {
+    s/\\n/\n/g;
+    s/\\t/\t/g;
+    s/\\s/\\/g;
+  }
+  @fields;
+}
+
+sub runCommand {
+  if ($debug) {
+    foreach $i ($[..$#_) {
+      print TRACE "arg ", $i, ": ", $_[$i], "\n";
+    }
+  }
+  pipe(PARENT_READ, CHILD_WRITE);
+  pipe(CHILD_READ, PARENT_WRITE);
+  $old_pipe = $|;
+  $| = 1;
+  $_child_id = fork();
+  $| = $old_pipe;
+  if ($_child_id == 0) {
+    close(PARENT_READ);
+    close(PARENT_WRITE);
+    open(STDOUT, ">&CHILD_WRITE");
+    open(STDIN, "<&CHILD_READ");
+    exec @_;
+  } else {
+    close(CHILD_READ);
+    close(CHILD_WRITE);
+#    if (defined $CMD_OUTPUT) {
+#      print PARENT_WRITE $CMD_OUTPUT;
+#    } elsif (defined @CMD_OUTPUT) {
+#      print PARENT_WRITE join("\n", @CMD_OUTPUT), "\n";
+#    }
+    close(PARENT_WRITE);
+    @results = <PARENT_READ>;
+    close(PARENT_READ);
+
+    $? = 0; $! = 0;
+    waitpid($_child_id, 0);
+    ($_run_status, $_run_errstr) = ($?, $! . "");
+    $_run_signal = $_run_status & 255;
+    $_run_exit   = $_run_status >>8;
+    #check $? for error status return...
+    if ($debug) { 
+      print TRACE "runCommand return status:  exit code = $_run_exit, ";
+      print TRACE "signal = $_run_signal, errstr = '$_run_errstr'\n",
+    };
+
+    foreach (@results) {
+      s/\n$//;
+    }
+    @results;
+  }
+}
+
+sub checkForRunError {
+  if ($_run_exit != 0 || $_run_signal != 0 || $_run_errstr ne "") {
+    $_StatusString .= "<B>WARNING: On database access, exit code was $_run_exit";
+    $_StatusString .= " (status = $_run_status)";
+    if ($_run_signal != 0) {
+      $_StatusString .= " and signal value was $_run_signal";
+    }
+    if ($_run_errstr ne "") {
+      $_StatusString .= " and error string was $_run_errstr";
+    }
+    if ($_run_exit != 0) {
+      $_StatusString .= "; message: " . pop(@_Output);
+    }
+    $_StatusString .= "</B><BR>";
+  }
+}
+
+# Values returned by localtime() are as follows:
+# $sec   is 0..59   -- seconds since the last minute started
+# $min   is 0..59   -- minutes since the last hour started
+# $hour  is 0..23   -- hour of the day, military style
+# $mday  is 1..31   -- day of the month
+# $mon   is 0..11   -- zero-based month number
+# $year  is 0..?    -- years since 1900 (so 2001 should be represented by 101).
+# $wday  is 0..6    -- zero-based day-of-week number
+# $yday  is 0..365  -- days since Jan 1 of the year
+# $isdst is 0..1    -- TRUE iff daylight savings time is in effect
+
+sub today {
+  local ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime;
+  sprintf "%04d/%02d/%02d", $year+1900, $mon+1, $mday;
+}
+
+sub now {
+  local ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime;
+  sprintf "%02d:%02d:%02d", $hour, $min, $sec;
+}
+
+#get input through one of the various CGI methods
+sub getCGIinput {
+  local ($buffer, $source);
+
+  if (defined $ENV{'CONTENT_LENGTH'}) {
+    read(STDIN, $buffer, $ENV{'CONTENT_LENGTH'});
+    $source = 'STDIN';
+  } elsif (defined $ENV{'PATH_INFO'}) {
+    $buffer = $ENV{'PATH_INFO'};
+    $buffer =~ s!^/!!;  #remove leading '/' from path-info
+    $source = 'PATH_INFO';
+  } elsif  (defined $ENV{'QUERY_STRING'}) {
+    $buffer = $ENV{'QUERY_STRING'};
+    $source = 'QUERY_STRING';
+  } elsif  (@ARGV > 0) {
+    $buffer = join('&', @ARGV);
+    $source = 'command_line';
+  } else {
+    $buffer = '';
+    $source = '<NO INPUT SUPPLIED>';
+  }
+  if ($debug) {
+    print TRACE 'input from ', $source, ": '", $buffer,"'\n";
+  }
+  $buffer;
+}
+
+#Split at &'s to get name=value pairs
+sub defineVariables {
+  local ($variables) = @_;
+  local (@pairs) = split(/&/, $variables);
+  local ($pair, $name, $value);
+
+if ($debug) {
+  print TRACE scalar(@pairs), " pairs: ", $variables, "\n";
+}
+  #For each name=value pair, split at the equal sign.
+  #Each pair N=V creates an entry in the associative 
+  # array %V of the form $V{'N'} = 'V'.
+  undef %V;
+  foreach $pair (@pairs) {
+    ($name, $value) = $pair =~ m/^([^=]*)=(.*)$/;
+    
+    #Undo %-encoding (/e option means "evaluate replacement patt")
+    $value =~ s/%0[Dd]%0[Aa]/%0A/g;
+    &URLdecode($value);
+    $V{$name} = $value;
+    if ($debug) {
+      print TRACE $name, "='", $value, "'\n";
+    }
+  }
+  1;
+}
+
+sub apologies {
+  my ($str) = @_;
+  my ($_html) = <<"EOF";
+Content-type: text/html
+
+<HTML>
+<HEAD>
+<TITLE>Our Apologies</TITLE>
+</HEAD>
+<BODY>
+Our Apologies ($str)
+</BODY>
+</HTML>
+EOF
+
+  print $_html;
+}
+
+1; #return TRUE to includer

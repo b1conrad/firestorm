@@ -1,0 +1,25 @@
++--------------Column  23------------------------------------------------------+
+¦  Type the text to be included in the report.  To include a data field,       ¦
+¦  press Select (F4), move to the field (possibly through links,) and again    ¦
+¦  press Select.  While the cursor is on a report field mark, you can press    ¦
+¦  F6 to edit the report format.  To include variable fields, prompts or       ¦
+¦  special control instructions, press Report Options (Ctrl-F7).               ¦
+¦                                                                              ¦
++------------------------------------------------------------------------------+
+Path to field: P1F2
+ Count
+
+Field Format: GZZZZZZZZZZZZZ9;;B
+-------------------------FIRST PAGE HEADER-------------------------------------
+                         --Empty--
+-------------------------OTHER PAGE HEADER-------------------------------------
+                         --Empty--
+-------------------------TWO-LEVEL REPORT HEADER-------------------------------
+                         --Empty--
+-------------------------REPORT BODY-------------------------------------------
+Name: ¦¦¦¦¦¦¦¦ Count: ¦¦¦¦¦¦¦¦¦¦¦¦¦¦
+-------------------------TWO-LEVEL FOOTER--------------------------------------
+                         --Empty--
+-------------------------PAGE FOOTER-------------------------------------------
+                         --Empty--
+-------------------------FINAL FOOTER------------------------------------------
